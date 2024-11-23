@@ -9,6 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.belongsTo(models.Group, { foreignKey: "groupId" });
+      User.hasMany(models.Transactions, { foreignKey: "userId" });
     }
   }
   User.init(
@@ -16,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       username: DataTypes.STRING,
-      roleId: DataTypes.INTEGER,
+      groupId : DataTypes.INTEGER,
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
     },

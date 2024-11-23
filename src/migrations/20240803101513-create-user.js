@@ -17,7 +17,7 @@ module.exports = {
       username: {
         type: Sequelize.STRING
       },
-      roleId: {
+      groupId: {
         type: Sequelize.INTEGER
       },
       createdAt: {

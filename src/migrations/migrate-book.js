@@ -16,12 +16,6 @@ module.exports = {
       },
       genreId: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Genres',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',  // Thêm điều này nếu muốn xóa sách khi thể loại bị xóa
-        onUpdate: 'CASCADE',  // Thêm điều này nếu muốn cập nhật sách khi thể loại bị cập nhật
       },
       quantity: {
         type: Sequelize.INTEGER,

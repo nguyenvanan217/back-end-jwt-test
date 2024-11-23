@@ -1,5 +1,5 @@
 import express from "express";
-import bodyParser from "body-parser"; //lấý dữ liệu như id , dùng query param
+import bodyParser, { raw } from "body-parser";
 import configViewEngine from "./configs/viewEngine";
 import initWebRoutes from "./Routes/web";
 import Connection from "./configs/connectdb";
@@ -7,14 +7,36 @@ import Connection from "./configs/connectdb";
 require("dotenv").config();
 
 let app = express();
-//config app
+
+// Cấu hình view engine
 configViewEngine(app);
+
+// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//test Connection db
+
+// Kiểm tra kết nối DB
 Connection();
-initWebRoutes(app);
-let port = process.env.PORT || 6969;
-app.listen(port, () => {
-  console.log("App is running at the port: " + port);
+
+// // Hàm test transactions
+// async function testTransactions() {
+//   try {
+//     const transactions = await db.User.findAll({
+//        include: db.Transactions,
+//        raw: true,
+//        nest: true
+//     });
+
+//     console.log(transactions);
+//   } catch (error) {
+//     console.error("Error fetching transactions:", error);
+//   }
+// }
+
+// Gọi testTransactions() sau khi khởi động app
+app.listen(process.env.PORT || 6969, () => {
+  console.log("App is running at the port: " + (process.env.PORT || 6969));
+  // testTransactions(); 
 });
+
+initWebRoutes(app);

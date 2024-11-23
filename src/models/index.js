@@ -43,4 +43,9 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.User.removeAttribute('createdAt'); 
+db.User.removeAttribute('updatedAt'); 
+
+
+
 module.exports = db;
