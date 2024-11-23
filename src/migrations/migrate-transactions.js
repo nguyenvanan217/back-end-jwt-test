@@ -10,9 +10,18 @@ module.exports = {
       },
       bookId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Book",
+          key: "id",
+        },
       },
       userId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "id",
+        },
       },
       borrow_date: {
         type: Sequelize.DATE,
