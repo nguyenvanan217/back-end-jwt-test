@@ -3,11 +3,15 @@ import bodyParser, { raw } from "body-parser";
 import configViewEngine from "./configs/viewEngine";
 import initWebRoutes from "./Routes/web";
 import Connection from "./configs/connectdb";
-
+var cors = require('cors')
 require("dotenv").config();
 
 let app = express();
-
+// app.use(cors({
+//   origin: process.env.REACT_URL,
+//   credentials: true,
+// }));
+app.use(cors())
 // Cấu hình view engine
 configViewEngine(app);
 
@@ -32,11 +36,11 @@ Connection();
 //     console.error("Error fetching transactions:", error);
 //   }
 // }
+initWebRoutes(app);
 
 // Gọi testTransactions() sau khi khởi động app
 app.listen(process.env.PORT || 6969, () => {
   console.log("App is running at the port: " + (process.env.PORT || 6969));
-  // testTransactions(); 
+  // testTransactions();
 });
 
-initWebRoutes(app);
