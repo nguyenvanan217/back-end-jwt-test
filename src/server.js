@@ -3,6 +3,7 @@ import bodyParser, { raw } from "body-parser";
 import configViewEngine from "./configs/viewEngine";
 import initWebRoutes from "./Routes/web";
 import Connection from "./configs/connectdb";
+import initAPIRoutes from "./Routes/api";
 var cors = require('cors')
 require("dotenv").config();
 
@@ -37,7 +38,7 @@ Connection();
 //   }
 // }
 initWebRoutes(app);
-
+initAPIRoutes(app)
 // Gọi testTransactions() sau khi khởi động app
 app.listen(process.env.PORT || 6969, () => {
   console.log("App is running at the port: " + (process.env.PORT || 6969));

@@ -1,0 +1,79 @@
+import db from "../models/index";
+let bcrypt = require("bcryptjs");
+var salt = bcrypt.genSaltSync(10);
+const hashUserPassword = (userPassword) => {
+  const hasPassword = bcrypt.hashSync(userPassword, salt);
+  return hasPassword;
+};
+const checkEmailExist = async (userEmail) => {
+  let user = await db.User.findOne({
+    where: {
+      email: userEmail,
+    },
+  });
+  if (user) {
+    return true;
+  }
+  return false;
+};
+const registerNewUser = async (rawData) => {
+  try {
+    let isEmailExist = await checkEmailExist(rawData.email);
+    if (isEmailExist === true) {
+      return {
+        EM: "Email is already in use",
+        EC: "1",
+      };
+    }
+    let hasPassword = hashUserPassword(rawData.password);
+    await db.User.create({
+      email: rawData.email,
+      username: rawData.username,
+      password: hasPassword,
+      groupId: 2,
+    });
+    return {
+      EM: "Register successfully",
+      EC: "0",
+    };
+  } catch (error) {
+    console.log("Error at registerNewUser: ", error);
+    return {
+      EM: "Something wrongs in service....",
+      EC: "-2",
+    };
+  }
+};
+const loginUser = async (rawData) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        email: rawData.email,
+      },
+    });
+    if (!user) {
+      return {
+        EM: "Email is not exist",
+        EC: "1",
+      };
+    }
+    let checkPassword = bcrypt.compareSync(rawData.password, user.password);
+    if (checkPassword === false) {
+      return {
+        EM: "Email or Password is not correct",
+        EC: "2",
+      };
+    }
+    return {
+      EM: "Login successfully",
+      EC: "0",
+    };
+  } catch (error) {
+    console.log("Error at loginUser: ", error);
+    return {
+      EM: "Something wrongs in service....",
+      EC: "-2",
+    };
+  }
+};
+module.exports = { registerNewUser, checkEmailExist ,loginUser };
