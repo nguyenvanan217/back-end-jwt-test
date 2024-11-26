@@ -4,22 +4,24 @@ import configViewEngine from "./configs/viewEngine";
 import initWebRoutes from "./Routes/web";
 import Connection from "./configs/connectdb";
 import initAPIRoutes from "./Routes/api";
-var cors = require('cors')
+import cors from "cors";
+import cookieParser from "cookie-parser";
 require("dotenv").config();
 
 let app = express();
-// app.use(cors({
-//   origin: process.env.REACT_URL,
-//   credentials: true,
-// }));
-app.use(cors())
+app.use(cors({
+  origin: process.env.REACT_URL,
+  credentials: true,
+}));
+
+// app.use(cors())
 // Cấu hình view engine
 configViewEngine(app);
-
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+//cấu hình cookie parser
+app.use(cookieParser())
 // Kiểm tra kết nối DB
 Connection();
 
@@ -38,10 +40,9 @@ Connection();
 //   }
 // }
 initWebRoutes(app);
-initAPIRoutes(app)
+initAPIRoutes(app);
 // Gọi testTransactions() sau khi khởi động app
 app.listen(process.env.PORT || 6969, () => {
   console.log("App is running at the port: " + (process.env.PORT || 6969));
   // testTransactions();
 });
-

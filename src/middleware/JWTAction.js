@@ -11,4 +11,5 @@ const createJWT = (payload) => {
   }
   return token;
 };  
+
 module.exports = { createJWT };

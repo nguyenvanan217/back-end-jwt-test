@@ -37,6 +37,7 @@ const handleRegister = async (req, res) => {
   }
 };
 const handleLogin = async (req, res) => {
+  console.log("req.cookies", req.cookies);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -47,6 +48,10 @@ const handleLogin = async (req, res) => {
       });
     }
     let data = await loginRegisterService.loginUser(req.body);
+    res.cookie("access_token", data.DT.access_token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+    });
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
