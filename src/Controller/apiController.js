@@ -50,7 +50,7 @@ const handleLogin = async (req, res) => {
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
-      DT: data.DT,
+      access_token: data.DT.access_token,
     });
   } catch (error) {
     console.log("Error at handleLogin: ", error);

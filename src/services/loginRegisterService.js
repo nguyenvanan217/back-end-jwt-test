@@ -1,3 +1,4 @@
+import { createJWT } from "../middleware/JWTAction";
 import db from "../models/index";
 let bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(10);
@@ -64,9 +65,18 @@ const loginUser = async (rawData) => {
         EC: "2",
       };
     }
+    const payload = {
+      email: user.email,
+      username: user.username,
+      groupId: user.groupId,
+    };
+    const token = createJWT(payload);
     return {
       EM: "Login successfully",
       EC: "0",
+      DT: {
+        access_token: token,
+      },
     };
   } catch (error) {
     console.log("Error at loginUser: ", error);
@@ -76,4 +86,4 @@ const loginUser = async (rawData) => {
     };
   }
 };
-module.exports = { registerNewUser, checkEmailExist ,loginUser };
+module.exports = { registerNewUser, checkEmailExist, loginUser };
