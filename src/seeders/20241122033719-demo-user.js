@@ -7,7 +7,7 @@ module.exports = {
       {
         id: 1,
         email: "Admin@gmail.com",
-        password: "hashed_password_1", // Thay bằng hash của mật khẩu thật
+        password: "1212", // Thay bằng hash của mật khẩu thật
         username: "Nguyễn An",
         groupId: 1,
         createdAt: new Date(),
@@ -16,7 +16,7 @@ module.exports = {
       {
         id: 2,
         email: "lebinh@gmail.com",
-        password: "hashed_password_2", // Thay bằng hash của mật khẩu thật
+        password: "1212", // Thay bằng hash của mật khẩu thật
         username: "Lê Hữu Bình",
         groupId: 2,
         createdAt: new Date(),

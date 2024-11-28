@@ -7,8 +7,12 @@ const initAPIRoutes = (app) => {
   router.post("/login", apiController.handleLogin);
   router.get("/users/read", apiController.getAllUsers);
   router.delete("/users/delete", apiController.deleteUser);
+  router.put("/users/update", apiController.updateUser);
+
+
 
   router.get("/groups/read", groupController.readFunc);
+
   return app.use("/api/v1", router);
 };
 export default initAPIRoutes;

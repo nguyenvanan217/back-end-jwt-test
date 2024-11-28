@@ -69,7 +69,60 @@ const deleteUser = async (id) => {
     };
   }
 };
+const updateCurrentUser = async (data) => {
+  try {
+    console.log("data", data);
+
+    let user = await db.User.findOne({
+      where: {
+        id: data.id,
+      },
+    });
+
+    if (!user) {
+      return {
+        EM: "User not found",
+        EC: 1,
+        DT: [],
+      };
+    }
+
+    const isNoChange =
+      user.username === data.username &&
+      user.email === data.email &&
+      user.groupId === data.group_id;
+
+    if (isNoChange) {
+      return {
+        EM: "No changes to update.",
+        EC: 1,
+        DT: [],
+      };
+    }
+
+  
+    await user.update({
+      username: data.username,
+      email: data.email,
+      groupId: data.group_id,
+    });
+
+    return {
+      EM: "Update user successfully",
+      EC: 0,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong with the service!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 module.exports = {
   getUser,
   deleteUser,
+  updateCurrentUser,
 };

@@ -38,7 +38,7 @@ const handleRegister = async (req, res) => {
   }
 };
 const handleLogin = async (req, res) => {
-  console.log("req.cookies", req.cookies);
+  // console.log("req.cookies", req.cookies);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -101,11 +101,28 @@ const deleteUser = async (req, res) => {
     });
   }
 };
-
+const updateUser = async (req, res) => {
+  try {
+    let data = await apiServices.updateCurrentUser(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at updateUser: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+}
 export default {
   testApi,
   handleRegister,
   handleLogin,
   getAllUsers,
   deleteUser,
+  updateUser
 };
