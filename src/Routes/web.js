@@ -1,5 +1,5 @@
 import express from "express";
-import apiController from "../Controller/apiController";
+import apiController from "../Controller/userController";
 let router = express.Router();
 
 let initWebRoutes = (app) => {

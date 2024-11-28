@@ -1,15 +1,16 @@
 import express from "express";
-import apiController from "../Controller/apiController";
+import userController from "../Controller/userController";
 import groupController from "../Controller/groupController";
+import bookController from "../Controller/bookController";
 let router = express.Router();
 const initAPIRoutes = (app) => {
-  router.post("/register", apiController.handleRegister);
-  router.post("/login", apiController.handleLogin);
-  router.get("/users/read", apiController.getAllUsers);
-  router.delete("/users/delete", apiController.deleteUser);
-  router.put("/users/update", apiController.updateUser);
+  router.post("/register", userController.handleRegister);
+  router.post("/login", userController.handleLogin);
+  router.get("/users/read", userController.getAllUsers);
+  router.delete("/users/delete", userController.deleteUser);
+  router.put("/users/update", userController.updateUser);
 
-
+  router.get("books/read", bookController.readFunc);
 
   router.get("/groups/read", groupController.readFunc);
 

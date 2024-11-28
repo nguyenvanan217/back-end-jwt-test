@@ -1,5 +1,5 @@
 import loginRegisterService from "../services/loginRegisterService";
-import apiServices from "../services/apiServices";
+import apiServices from "../services/userServices";
 const testApi = async (req, res) => {
   return await res.status(200).json({
     message: "Test API success",
