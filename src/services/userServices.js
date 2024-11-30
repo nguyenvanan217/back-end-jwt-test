@@ -1,15 +1,29 @@
-const db = require("../models");
+import db from "../models"
+import { sequelize } from '../models';
 
 const getUser = async (req, res) => {
   try {
     let users = await db.User.findAll({
-      attributes: ["id", "username", "email"],
+      attributes: [
+        "id",
+        "username",
+        "email",
+        [
+          sequelize.fn("COUNT", sequelize.col("Transactions.bookId")),
+          "borrowedBooksCount",
+        ],
+      ],
       include: [
         {
           model: db.Group,
           attributes: ["name", "description", "id"],
         },
+        {
+          model: db.Transactions,
+          attributes: ["status"],
+        },
       ],
+      group: ["User.id", "Group.id"],
       order: [["id", "DESC"]],
     });
     if (users) {
@@ -71,8 +85,6 @@ const deleteUser = async (id) => {
 };
 const updateCurrentUser = async (data) => {
   try {
-    console.log("data", data);
-
     let user = await db.User.findOne({
       where: {
         id: data.id,
@@ -100,7 +112,6 @@ const updateCurrentUser = async (data) => {
       };
     }
 
-  
     await user.update({
       username: data.username,
       email: data.email,

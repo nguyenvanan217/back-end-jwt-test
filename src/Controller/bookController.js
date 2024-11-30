@@ -1,6 +1,7 @@
+import bookService from "../services/bookService";
 const readFunc = async (req, res) => {
   try {
-    let data = await apiServices.getAllBook();
+    let data = await bookService.getAllBook();
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

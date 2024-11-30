@@ -5,7 +5,7 @@ const createJWT = (payload) => {
   let token = null;
   try {
     token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRE });
-    console.log("token", token);
+    // console.log("token", token);
     return token;
   } catch (error) {
     console.log("error createJWT", error);
@@ -21,7 +21,7 @@ const verifyJWT = (token) => {
   } catch (error) {
     console.log("error verifyJWT", error);
   }
-  console.log("data", data);
+  // console.log("data", data);
   return data;
 };
 
