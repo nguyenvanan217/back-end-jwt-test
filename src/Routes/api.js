@@ -10,8 +10,12 @@ const initAPIRoutes = (app) => {
   router.delete("/users/delete", userController.deleteUser);
   router.put("/users/update", userController.updateUser);
 
-  router.get("/books/read", bookController.readFunc);
 
+
+  router.get("/books/read", bookController.readFunc);
+  
+
+  // router.get("/status/read", userController.readFunc);
   router.get("/groups/read", groupController.readFunc);
 
   return app.use("/api/v1", router);

@@ -1,5 +1,6 @@
-import db from "../models"
-import { sequelize } from '../models';
+import { raw } from "body-parser";
+import db from "../models";
+import { sequelize } from "../models";
 
 const getUser = async (req, res) => {
   try {
@@ -86,9 +87,13 @@ const deleteUser = async (id) => {
 const updateCurrentUser = async (data) => {
   try {
     let user = await db.User.findOne({
-      where: {
-        id: data.id,
-      },
+      where: { id: data.id },
+      include: [
+        {
+          model: db.Transactions,
+          attributes: ["status"],
+        },
+      ],
     });
 
     if (!user) {
@@ -99,24 +104,40 @@ const updateCurrentUser = async (data) => {
       };
     }
 
-    const isNoChange =
-      user.username === data.username &&
-      user.email === data.email &&
-      user.groupId === data.group_id;
+    // Kiểm tra sự thay đổi của dữ liệu trước khi update
+    let isUserUpdated = false;
+    if (
+      user.username !== data.username ||
+      user.email !== data.email ||
+      user.groupId !== data.group_id
+    ) {
+      await user.update({
+        username: data.username,
+        email: data.email,
+        groupId: data.group_id,
+      });
+      isUserUpdated = true;
+    }
 
-    if (isNoChange) {
+    // Kiểm tra sự thay đổi của status
+    const currentStatus = user.Transactions[0]?.status;
+    let isStatusUpdated = false;
+    if (data.status && currentStatus !== data.status) {
+      await db.Transactions.update(
+        { status: data.status },
+        { where: { userId: data.id } }
+      );
+      isStatusUpdated = true;
+    }
+
+    // Kiểm tra nếu không có thay đổi
+    if (!isUserUpdated && !isStatusUpdated) {
       return {
-        EM: "No changes to update.",
-        EC: 1,
+        EM: "Nothing to update",
+        EC: 2,
         DT: [],
       };
     }
-
-    await user.update({
-      username: data.username,
-      email: data.email,
-      groupId: data.group_id,
-    });
 
     return {
       EM: "Update user successfully",
@@ -124,7 +145,7 @@ const updateCurrentUser = async (data) => {
       DT: [],
     };
   } catch (error) {
-    console.log(error);
+    console.error("Error updating user:", error);
     return {
       EM: "Something went wrong with the service!",
       EC: 1,
@@ -132,8 +153,37 @@ const updateCurrentUser = async (data) => {
     };
   }
 };
+
+
+// const getStatus = async (req, res) => {
+//   try {
+//     let status = await db.Transactions.findAll({
+//       attributes: ["status"],
+//     });
+//     if (status) {
+//       return {
+//         EM: "Get all status successfully",
+//         EC: 0,
+//         DT: status,
+//       };
+//     }
+//     return {
+//       EM: "No status found",
+//       EC: 1,
+//       DT: [],
+//     };
+//   } catch (error) {
+//     console.log(error);
+//     return {
+//       EM: "Something went wrong with the service!",
+//       EC: 1,
+//       DT: [],
+//     };
+//   }
+// };
 module.exports = {
   getUser,
   deleteUser,
   updateCurrentUser,
+  // getStatus,
 };
