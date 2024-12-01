@@ -12,9 +12,9 @@ const initAPIRoutes = (app) => {
 
 
 
-  router.get("/books/read", bookController.readFunc);
   
-
+  router.get("/users/read/:id", userController.getUserDetailsById);
+  router.get("/books/read", bookController.readFunc);
   // router.get("/status/read", userController.readFunc);
   router.get("/groups/read", groupController.readFunc);
 

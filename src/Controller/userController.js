@@ -138,6 +138,24 @@ const updateUser = async (req, res) => {
 //     });
 //   }
 // };
+const getUserDetailsById = async (req, res) => {
+  try {
+    let data = await userService.getUserById(req.params.id);
+    console.log("data", data);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at getUserDetailsById: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 export default {
   testApi,
   handleRegister,
@@ -146,4 +164,5 @@ export default {
   deleteUser,
   updateUser,
   // readFunc,
+  getUserDetailsById,
 };

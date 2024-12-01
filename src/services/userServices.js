@@ -154,7 +154,6 @@ const updateCurrentUser = async (data) => {
   }
 };
 
-
 // const getStatus = async (req, res) => {
 //   try {
 //     let status = await db.Transactions.findAll({
@@ -181,9 +180,54 @@ const updateCurrentUser = async (data) => {
 //     };
 //   }
 // };
+const getUserById = async (id) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        id: id,
+      },
+      include: [
+        {
+          model: db.Group,
+          attributes: ["name", "description", "id"],
+        },
+        {
+          model: db.Transactions,
+          include: [
+            {
+              model: db.Book,
+              attributes: ["title", "author", "cover_image"], // Chỉ lấy cột title từ bảng Book
+            },
+          ],
+        },
+      ],
+    });
+    if (user) {
+      return {
+        EM: "Get user details successfully",
+        EC: 0,
+        DT: user,
+      };
+    } else {
+      return {
+        EM: "Get user details failed",
+        EC: 1,
+        DT: [],
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong with the service!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 module.exports = {
   getUser,
   deleteUser,
   updateCurrentUser,
   // getStatus,
+  getUserById,
 };
