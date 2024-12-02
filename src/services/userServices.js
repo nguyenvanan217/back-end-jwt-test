@@ -154,32 +154,34 @@ const updateCurrentUser = async (data) => {
   }
 };
 
-// const getStatus = async (req, res) => {
-//   try {
-//     let status = await db.Transactions.findAll({
-//       attributes: ["status"],
-//     });
-//     if (status) {
-//       return {
-//         EM: "Get all status successfully",
-//         EC: 0,
-//         DT: status,
-//       };
-//     }
-//     return {
-//       EM: "No status found",
-//       EC: 1,
-//       DT: [],
-//     };
-//   } catch (error) {
-//     console.log(error);
-//     return {
-//       EM: "Something went wrong with the service!",
-//       EC: 1,
-//       DT: [],
-//     };
-//   }
-// };
+const getStatus = async (userId) => {
+  try {
+    let status = await db.Transactions.findAll({
+      attributes: ["status"],
+      where: { userId: userId }, // Lọc theo userId
+    });
+    if (status.length > 0) {
+      return {
+        EM: "Get user status successfully",
+        EC: 0,
+        DT: status,
+      };
+    }
+    return {
+      EM: "No status found for the given user",
+      EC: 1,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong with the service!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
 const getUserById = async (id) => {
   try {
     let user = await db.User.findOne({
@@ -228,6 +230,6 @@ module.exports = {
   getUser,
   deleteUser,
   updateCurrentUser,
-  // getStatus,
+  getStatus,
   getUserById,
 };

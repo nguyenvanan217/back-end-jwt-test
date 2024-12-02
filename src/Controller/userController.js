@@ -120,24 +120,26 @@ const updateUser = async (req, res) => {
     });
   }
 };
-// const readFunc = async (req, res) => {
-//   try {
-//     let data = await userService.getStatus();
-//     console.log("Status data:", data);
-//     return res.status(200).json({
-//       EM: data.EM,
-//       EC: data.EC,
-//       DT: data.DT,
-//     });
-//   } catch (error) {
-//     console.log("Error at get Status: ", error);
-//     return res.status(500).json({
-//       EM: "Internal server error",
-//       EC: "-1",
-//       DT: "",
-//     });
-//   }
-// };
+const getStatusById = async (req, res) => {
+  try {
+    const userId = req.params.id; 
+    let data = await userService.getStatus(userId);
+    console.log("Status data:", data);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at get Status: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 const getUserDetailsById = async (req, res) => {
   try {
     let data = await userService.getUserById(req.params.id);
@@ -163,6 +165,6 @@ export default {
   getAllUsers,
   deleteUser,
   updateUser,
-  // readFunc,
+  getStatusById,
   getUserDetailsById,
 };
