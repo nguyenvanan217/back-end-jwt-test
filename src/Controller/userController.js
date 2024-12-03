@@ -124,7 +124,6 @@ const getStatusById = async (req, res) => {
   try {
     const userId = req.params.id; 
     let data = await userService.getStatus(userId);
-    console.log("Status data:", data);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -143,7 +142,6 @@ const getStatusById = async (req, res) => {
 const getUserDetailsById = async (req, res) => {
   try {
     let data = await userService.getUserById(req.params.id);
-    console.log("data", data);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

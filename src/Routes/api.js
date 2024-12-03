@@ -2,6 +2,7 @@ import express from "express";
 import userController from "../Controller/userController";
 import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
+import transactionController from "../Controller/transactionController";
 let router = express.Router();
 const initAPIRoutes = (app) => {
   router.post("/register", userController.handleRegister);
@@ -9,12 +10,14 @@ const initAPIRoutes = (app) => {
   router.get("/users/read", userController.getAllUsers);
   router.delete("/users/delete", userController.deleteUser);
   router.put("/users/update", userController.updateUser);
+  router.put("/transactions/update-status", transactionController.updateStatus);
 
 
 
   
   router.get("/users/read/:id", userController.getUserDetailsById);
   router.get("/status/read/:id", userController.getStatusById);
+
   router.get("/books/read", bookController.readFunc);
   router.get("/groups/read", groupController.readFunc);
 
