@@ -14,7 +14,7 @@ const initAPIRoutes = (app) => {
 
 
 
-  
+  router.delete("/transactions/delete/:id", transactionController.deleteTransaction);
   router.get("/users/read/:id", userController.getUserDetailsById);
   router.get("/status/read/:id", userController.getStatusById);
 
