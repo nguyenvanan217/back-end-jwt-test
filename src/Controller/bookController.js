@@ -16,7 +16,17 @@ const readFunc = async (req, res) => {
     });
   }
 };
-
+const createBook = async (req, res) => {
+  let data = req.body;
+  let response = await bookService.createBook(data);
+  console.log(response);
+  return res.status(200).json({
+    EM: response.EM,
+    EC: response.EC,
+    DT: response.DT,
+  });
+};
 export default {
-    readFunc,
+  readFunc,
+  createBook,
 };

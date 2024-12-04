@@ -39,4 +39,30 @@ const getAllBook = async () => {
     };
   }
 };
-module.exports = { getAllBook };
+
+const createBook = async (data) => {
+  try {
+    console.log(data);
+    let book = await db.Book.create({
+      title: data.title,
+      author: data.author,
+      quantity: data.quantity,
+      cover_image: data.cover_image,
+      genreId: data.genreId,
+    });
+    return {
+      EM: "Create book successfully",
+      EC: 0,
+      DT: book,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "something wrong width service !",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
+module.exports = { getAllBook, createBook };

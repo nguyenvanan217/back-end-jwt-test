@@ -12,13 +12,12 @@ const initAPIRoutes = (app) => {
   router.put("/users/update", userController.updateUser);
   router.put("/transactions/update-status", transactionController.updateStatus);
 
-
-
   router.delete("/transactions/delete/:id", transactionController.deleteTransaction);
   router.get("/users/read/:id", userController.getUserDetailsById);
   router.get("/status/read/:id", userController.getStatusById);
-
+  
   router.get("/books/read", bookController.readFunc);
+  router.post('/api/v1/books/create', bookController.createBook)
   router.get("/groups/read", groupController.readFunc);
 
   return app.use("/api/v1", router);
