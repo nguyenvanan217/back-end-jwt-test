@@ -15,9 +15,12 @@ const initAPIRoutes = (app) => {
   router.delete("/transactions/delete/:id", transactionController.deleteTransaction);
   router.get("/users/read/:id", userController.getUserDetailsById);
   router.get("/status/read/:id", userController.getStatusById);
-  
+
+  router.get("/genres/read", bookController.readGenre);
   router.get("/books/read", bookController.readFunc);
-  router.post('/api/v1/books/create', bookController.createBook)
+  router.post('/books/create', bookController.createBook)
+  router.delete('/books/delete/:id', bookController.deleteBook)
+  router.put('/books/update/:id', bookController.updateBook)
   router.get("/groups/read", groupController.readFunc);
 
   return app.use("/api/v1", router);
