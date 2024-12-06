@@ -20,7 +20,10 @@ const initAPIRoutes = (app) => {
   router.get("/books/read", bookController.readFunc);
   router.post('/books/create', bookController.createBook)
   router.delete('/books/delete/:id', bookController.deleteBook)
+  router.post('/genres/create',bookController.addGenres)
+  router.delete('/genres/delete/:id', bookController.deleteGenre)
   router.put('/books/update/:id', bookController.updateBook)
+
   router.get("/groups/read", groupController.readFunc);
 
   return app.use("/api/v1", router);

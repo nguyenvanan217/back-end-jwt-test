@@ -89,10 +89,47 @@ const updateBook = async (req, res) => {
     });
   }
 };
+const addGenres = async (req, res) => {
+  try {
+    let data = await bookService.genresCreate(req.body.name);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at add genres: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+const deleteGenre = async (req, res) => {
+  try {
+    let id = req.params.id;
+    let response = await bookService.deleteGenreById(id);
+    return res.status(200).json({
+      EM: response.EM,
+      EC: response.EC,
+      DT: response.DT,
+    });
+  } catch (error) {
+    console.log("Error at delete genre: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 export default {
   readFunc,
   createBook,
   readGenre,
   updateBook,
   deleteBook,
+  addGenres,
+  deleteGenre,
 };

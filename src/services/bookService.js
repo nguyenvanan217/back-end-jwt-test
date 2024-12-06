@@ -132,7 +132,7 @@ const updateBook = async (id, data) => {
       include: [
         {
           model: db.Genres,
-          attributes: ['name']
+          attributes: ["name"],
         },
       ],
     });
@@ -164,7 +164,7 @@ const updateBook = async (id, data) => {
       "author",
       "quantity",
       "cover_image",
-      "genreId"
+      "genreId",
     ];
 
     for (const field of comparableFields) {
@@ -204,10 +204,67 @@ const updateBook = async (id, data) => {
     };
   }
 };
+const genresCreate = async (data) => {
+  try {
+    let genres = await db.Genres.findOne({
+      where: {
+        name: data,
+      },
+    });
+    if (genres) {
+      return {
+        EM: "This genre already exists",
+        EC: "1",
+      };
+    }
+    await db.Genres.create({
+      name: data,
+    });
+    return {
+      EM: "Create genre successfully",
+      EC: "0",
+    };
+  } catch (error) {
+    console.log("Error at add genres: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+const deleteGenreById = async (id) => {
+  try {
+    let check = await db.Genres.findOne({ where: { id } });
+    if (check) {
+      await db.Genres.destroy({ where: { id } });
+      return {
+        EM: "Delete genre successfully",
+        EC: 0,
+        DT: [],
+      };
+    } else {
+      return {
+        EM: "Genre not found",
+        EC: 1,
+        DT: [],
+      };
+    }
+  } catch (error) {
+    console.log("Error at delete genre: ", error);
+    return {
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    };
+  }
+};
 module.exports = {
   getAllBook,
   createBook,
   getAllGenre,
   deleteBook,
   updateBook,
+  genresCreate,
+  deleteGenreById,
 };
