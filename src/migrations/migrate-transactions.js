@@ -24,10 +24,10 @@ module.exports = {
         },
       },
       borrow_date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
       },
       return_date: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
       },
       status: {
         type: Sequelize.STRING,

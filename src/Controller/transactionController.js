@@ -1,4 +1,6 @@
 import db from "../models";
+import transactionService from "../services/transactionService";
+
 const updateStatus = async (req, res) => {
   try {
     const transactions = req.body;
@@ -12,7 +14,6 @@ const updateStatus = async (req, res) => {
 
     let nothingToUpdate = true;
 
-   
     for (const transaction of transactions) {
       if (!transaction.id || !transaction.status) {
         return res.status(400).json({
@@ -22,7 +23,6 @@ const updateStatus = async (req, res) => {
         });
       }
 
-     
       const existingTransaction = await db.Transactions.findOne({
         where: { id: transaction.id },
         attributes: ["status"],
@@ -36,7 +36,6 @@ const updateStatus = async (req, res) => {
         });
       }
 
-     
       if (existingTransaction.status !== transaction.status) {
         nothingToUpdate = false;
         await db.Transactions.update(
@@ -46,7 +45,6 @@ const updateStatus = async (req, res) => {
       }
     }
 
-   
     if (nothingToUpdate) {
       return res.status(200).json({
         EM: "Nothing to update",
@@ -103,7 +101,27 @@ const deleteTransaction = async (req, res) => {
     });
   }
 };
+
+const autoUpdateStatusInDB = async (req, res) => {
+  try {
+    let data = await transactionService.autoUpdateStatusInDB();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at auto update Status: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   updateStatus,
   deleteTransaction,
+  autoUpdateStatusInDB,
 };

@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       bookId: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
-      borrow_date: DataTypes.DATE,
-      return_date: DataTypes.DATE,
+      borrow_date: DataTypes.DATEONLY,
+      return_date: DataTypes.DATEONLY,      
       status: DataTypes.STRING,
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
