@@ -67,7 +67,7 @@ const updateDateAndStatus = async (req, res) => {
     let hasChanges = false;
 
     for (const transaction of transactions) {
-      const { id, status, borrow_date, return_date } = transaction;
+      const { id, borrow_date, return_date } = transaction;
 
       const existingTransaction = await db.Transactions.findByPk(id);
       if (!existingTransaction) {
@@ -79,12 +79,10 @@ const updateDateAndStatus = async (req, res) => {
       }
 
       if (
-        existingTransaction.status !== status ||
         existingTransaction.borrow_date !== borrow_date ||
         existingTransaction.return_date !== return_date
       ) {
         await existingTransaction.update({
-          status,
           borrow_date,
           return_date,
         });
@@ -115,8 +113,52 @@ const updateDateAndStatus = async (req, res) => {
   }
 };
 
+const markViolationAsResolved = async (req, res) => {
+  try {
+    const { transactionId } = req.params;
+
+    if (!transactionId) {
+      return res.status(400).json({
+        EM: "Missing transaction ID",
+        EC: 1,
+        DT: [],
+      });
+    }
+
+    const transaction = await db.Transactions.findOne({
+      where: { id: transactionId },
+    });
+
+    if (!transaction) {
+      return res.status(404).json({
+        EM: "Không tìm thấy giao dịch",
+        EC: 1,
+        DT: [],
+      });
+    }
+
+    await transaction.update({
+      status: "Đã trả",
+    });
+
+    return res.status(200).json({
+      EM: "Cập nhật trạng thái thành công",
+      EC: 0,
+      DT: [],
+    });
+  } catch (error) {
+    console.log("Error at markViolationAsResolved: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   deleteTransaction,
   autoUpdateStatusInDB,
   updateDateAndStatus,
+  markViolationAsResolved,
 };

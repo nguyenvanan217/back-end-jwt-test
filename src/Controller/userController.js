@@ -122,7 +122,7 @@ const updateUser = async (req, res) => {
 };
 const getStatusById = async (req, res) => {
   try {
-    const userId = req.params.id; 
+    const userId = req.params.id;
     let data = await userService.getStatus(userId);
     return res.status(200).json({
       EM: data.EM,
@@ -156,6 +156,23 @@ const getUserDetailsById = async (req, res) => {
     });
   }
 };
+const getAllUsersAndInfor = async (req, res) => {
+  try {
+    let data = await userService.getAllUsersAndInfor();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error at getAllUsersAndInfor: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 export default {
   testApi,
   handleRegister,
@@ -165,4 +182,5 @@ export default {
   updateUser,
   getStatusById,
   getUserDetailsById,
+  getAllUsersAndInfor,
 };

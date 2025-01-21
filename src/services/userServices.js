@@ -226,10 +226,54 @@ const getUserById = async (id) => {
     };
   }
 };
+const getAllUsersAndInfor = async () => {
+  try {
+    let users = await db.User.findAll({
+      attributes: ["id", "username", "email"],
+      include: [
+        {
+          model: db.Transactions,
+          attributes: ["id", "borrow_date", "return_date", "status"],
+          include: [
+            {
+              model: db.Book,
+              attributes: ["title", "cover_image", "quantity"],
+            },
+          ],
+        },
+      ],
+      order: [["id", "DESC"]],
+      raw: true,
+      nest: true,
+    });
+
+    if (users && users.length > 0) {
+      return {
+        EM: "Lấy thông tin người dùng thành công",
+        EC: 0,
+        DT: users,
+      };
+    }
+
+    return {
+      EM: "Không tìm thấy dữ liệu người dùng",
+      EC: 1,
+      DT: [],
+    };
+  } catch (error) {
+    console.error("Error in getAllUsersAndInfor:", error);
+    return {
+      EM: "Lỗi dịch vụ!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 module.exports = {
   getUser,
   deleteUser,
   updateCurrentUser,
   getStatus,
   getUserById,
+  getAllUsersAndInfor,
 };

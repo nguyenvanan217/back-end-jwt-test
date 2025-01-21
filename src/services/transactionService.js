@@ -5,18 +5,17 @@ const autoUpdateStatusInDB = async () => {
     // Lấy ngày hiện tại và format thành YYYY-MM-DD
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split("T")[0];
-    console.log("Current date:", currentDateString);
-
+    
     // Tìm tất cả giao dịch chưa trả
     const transactions = await db.Transactions.findAll({
       where: {
         status: {
-          [db.Sequelize.Op.ne]: "Đã trả",
+          [db.Sequelize.Op.ne]: "",
         },
       },
     });
 
-    console.log("Found transactions to check:", transactions.length);
+    
 
     // Phân loại và kiểm tra thay đổi
     const overdueTransactions = [];
@@ -34,10 +33,6 @@ const autoUpdateStatusInDB = async () => {
         waitingTransactions.push(trans.id);
         hasStatusChanges = true;
       }
-
-      console.log(
-        `Transaction ID: ${trans.id}, Return date: ${trans.return_date}, Current status: ${trans.status}, Should be overdue: ${shouldBeOverdue}`
-      );
     });
 
     // Chỉ cập nhật nếu có thay đổi

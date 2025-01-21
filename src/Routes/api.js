@@ -9,6 +9,11 @@ const initAPIRoutes = (app) => {
   router.post("/login", userController.handleLogin);
   router.get("/users/read", userController.getAllUsers);
   router.delete("/users/delete", userController.deleteUser);
+  router.put(
+    "/transactions/resolve-violation/:transactionId",
+    transactionController.markViolationAsResolved
+  );
+  router.get("/users/get-all-user-infor", userController.getAllUsersAndInfor);
   router.put("/users/update", userController.updateUser);
   router.put(
     "/transactions/update-date-and-status",
