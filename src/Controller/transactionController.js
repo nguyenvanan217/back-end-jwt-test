@@ -1,73 +1,6 @@
 import db from "../models";
 import transactionService from "../services/transactionService";
 
-const updateStatus = async (req, res) => {
-  try {
-    const transactions = req.body;
-    if (!Array.isArray(transactions) || transactions.length === 0) {
-      return res.status(400).json({
-        EM: "Invalid data format",
-        EC: 1,
-        DT: [],
-      });
-    }
-
-    let nothingToUpdate = true;
-
-    for (const transaction of transactions) {
-      if (!transaction.id || !transaction.status) {
-        return res.status(400).json({
-          EM: "Missing id or status for a transaction",
-          EC: 1,
-          DT: [],
-        });
-      }
-
-      const existingTransaction = await db.Transactions.findOne({
-        where: { id: transaction.id },
-        attributes: ["status"],
-      });
-
-      if (!existingTransaction) {
-        return res.status(404).json({
-          EM: `Transaction with id ${transaction.id} not found`,
-          EC: 1,
-          DT: [],
-        });
-      }
-
-      if (existingTransaction.status !== transaction.status) {
-        nothingToUpdate = false;
-        await db.Transactions.update(
-          { status: transaction.status },
-          { where: { id: transaction.id } }
-        );
-      }
-    }
-
-    if (nothingToUpdate) {
-      return res.status(200).json({
-        EM: "Nothing to update",
-        EC: 2,
-        DT: [],
-      });
-    }
-
-    return res.status(200).json({
-      EM: "Update status successfully",
-      EC: 0,
-      DT: [],
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      EM: "Something went wrong with the service!",
-      EC: 1,
-      DT: [],
-    });
-  }
-};
-
 const deleteTransaction = async (req, res) => {
   try {
     const transactionId = req.params.id;
@@ -120,8 +53,70 @@ const autoUpdateStatusInDB = async (req, res) => {
   }
 };
 
+const updateDateAndStatus = async (req, res) => {
+  try {
+    const transactions = req.body;
+    if (!Array.isArray(transactions) || transactions.length === 0) {
+      return res.status(400).json({
+        EM: "Invalid data format",
+        EC: 1,
+        DT: [],
+      });
+    }
+
+    let hasChanges = false;
+
+    for (const transaction of transactions) {
+      const { id, status, borrow_date, return_date } = transaction;
+
+      const existingTransaction = await db.Transactions.findByPk(id);
+      if (!existingTransaction) {
+        return res.status(404).json({
+          EM: `Transaction with id ${id} not found`,
+          EC: 1,
+          DT: [],
+        });
+      }
+
+      if (
+        existingTransaction.status !== status ||
+        existingTransaction.borrow_date !== borrow_date ||
+        existingTransaction.return_date !== return_date
+      ) {
+        await existingTransaction.update({
+          status,
+          borrow_date,
+          return_date,
+        });
+        hasChanges = true;
+      }
+    }
+
+    if (!hasChanges) {
+      return res.status(200).json({
+        EM: "Không có thay đổi nào",
+        EC: 2,
+        DT: [],
+      });
+    }
+
+    return res.status(200).json({
+      EM: "Cập nhật thành công",
+      EC: 0,
+      DT: [],
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      EM: "Something went wrong with the service!",
+      EC: 1,
+      DT: [],
+    });
+  }
+};
+
 module.exports = {
-  updateStatus,
   deleteTransaction,
   autoUpdateStatusInDB,
+  updateDateAndStatus,
 };

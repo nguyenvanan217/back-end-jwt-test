@@ -102,6 +102,7 @@ const autoUpdateStatusInDB = async () => {
   }
 };
 
+
 module.exports = {
   autoUpdateStatusInDB,
 };

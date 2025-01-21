@@ -10,18 +10,20 @@ const initAPIRoutes = (app) => {
   router.get("/users/read", userController.getAllUsers);
   router.delete("/users/delete", userController.deleteUser);
   router.put("/users/update", userController.updateUser);
-  router.put("/transactions/update-status", transactionController.updateStatus);
-
+  router.put(
+    "/transactions/update-date-and-status",
+    transactionController.updateDateAndStatus
+  );
+  router.put(
+    "/transactions/autoupdatestatus",
+    transactionController.autoUpdateStatusInDB
+  );
   router.delete(
     "/transactions/delete/:id",
     transactionController.deleteTransaction
   );
   router.get("/users/read/:id", userController.getUserDetailsById);
   router.get("/status/read/:id", userController.getStatusById);
-  router.put(
-    "/transactions/autoupdatestatus",
-    transactionController.autoUpdateStatusInDB
-  );
 
   router.get("/genres/read", bookController.readGenre);
   router.get("/books/read", bookController.readFunc);

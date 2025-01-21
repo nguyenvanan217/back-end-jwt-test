@@ -133,7 +133,7 @@ const updateCurrentUser = async (data) => {
     // Kiểm tra nếu không có thay đổi
     if (!isUserUpdated && !isStatusUpdated) {
       return {
-        EM: "Nothing to update",
+        EM: "Không có thay đổi nào",
         EC: 2,
         DT: [],
       };

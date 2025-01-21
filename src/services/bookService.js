@@ -179,7 +179,7 @@ const updateBook = async (id, data) => {
 
     if (!hasChanges) {
       return {
-        EM: "Nothing to update",
+        EM: "Không có thay đổi nào",
         EC: 1,
         DT: [],
       };
