@@ -127,6 +127,11 @@ const markViolationAsResolved = async (req, res) => {
 
     const transaction = await db.Transactions.findOne({
       where: { id: transactionId },
+      include: [
+        {
+          model: db.Book,
+        },
+      ],
     });
 
     if (!transaction) {
@@ -137,8 +142,14 @@ const markViolationAsResolved = async (req, res) => {
       });
     }
 
+    // Cập nhật status transaction
     await transaction.update({
       status: "Đã trả",
+    });
+
+    // Tăng số lượng sách
+    await transaction.Book.update({
+      quantity: transaction.Book.quantity + 1,
     });
 
     return res.status(200).json({
@@ -156,9 +167,45 @@ const markViolationAsResolved = async (req, res) => {
   }
 };
 
+const createTransactionController = async (req, res) => {
+  try {
+    const data = req.body;
+
+    // Validate input
+    if (
+      !data.bookId ||
+      !data.studentEmail ||
+      !data.borrowDate ||
+      !data.returnDate
+    ) {
+      return res.status(400).json({
+        EM: "Thiếu thông tin cần thiết",
+        EC: 1,
+        DT: [],
+      });
+    }
+
+    let result = await transactionService.createTransactionService(data);
+
+    return res.status(200).json({
+      EM: result.EM,
+      EC: result.EC,
+      DT: result.DT,
+    });
+  } catch (error) {
+    console.log("Error at createTransactionController: ", error);
+    return res.status(500).json({
+      EM: "Internal server error",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   deleteTransaction,
   autoUpdateStatusInDB,
   updateDateAndStatus,
   markViolationAsResolved,
+  createTransactionController,
 };

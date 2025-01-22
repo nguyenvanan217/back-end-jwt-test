@@ -5,7 +5,7 @@ const autoUpdateStatusInDB = async () => {
     // Lấy ngày hiện tại và format thành YYYY-MM-DD
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split("T")[0];
-    
+
     // Tìm tất cả giao dịch chưa trả
     const transactions = await db.Transactions.findAll({
       where: {
@@ -15,8 +15,6 @@ const autoUpdateStatusInDB = async () => {
       },
     });
 
-    
-
     // Phân loại và kiểm tra thay đổi
     const overdueTransactions = [];
     const waitingTransactions = [];
@@ -25,7 +23,6 @@ const autoUpdateStatusInDB = async () => {
     transactions.forEach((trans) => {
       const shouldBeOverdue = trans.return_date < currentDateString;
 
-      // Kiểm tra nếu cần thay đổi status
       if (shouldBeOverdue && trans.status !== "Quá hạn") {
         overdueTransactions.push(trans.id);
         hasStatusChanges = true;
@@ -97,7 +94,73 @@ const autoUpdateStatusInDB = async () => {
   }
 };
 
+const createTransactionService = async (data) => {
+  try {
+    // Kiểm tra có sach đó hay ko
+    const book = await db.Book.findByPk(data.bookId);
+
+    if (!book) {
+      return {
+        EM: "Không tìm thấy sách",
+        EC: 1,
+        DT: [],
+      };
+    }
+
+    if (book.quantity <= 0) {
+      return {
+        EM: "Sách đã hết, không thể cho mượn",
+        EC: 1,
+        DT: [],
+      };
+    }
+
+    // Tìm user dựa vào email
+    const user = await db.User.findOne({
+      where: { email: data.studentEmail },
+    });
+
+    if (!user) {
+      return {
+        EM: "Không tìm thấy sinh viên với email này",
+        EC: 1,
+        DT: [],
+      };
+    }
+
+    // Tạo transaction với userId đã tìm được
+    const transaction = await db.Transactions.create({
+      bookId: data.bookId,
+      userId: user.id,
+      borrow_date: data.borrowDate,
+      return_date: data.returnDate,
+      status: data.status,
+    });
+
+    // Giảm số lượng sách
+    await book.update({
+      quantity: book.quantity - 1,
+    });
+
+    return {
+      EM: "Đăng ký mượn sách thành công",
+      EC: 0,
+      DT: {
+        transactionId: transaction.id,
+        userId: user.id,
+      },
+    };
+  } catch (error) {
+    console.error("Error in createTransactionService:", error);
+    return {
+      EM: "Lỗi dịch vụ!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 
 module.exports = {
   autoUpdateStatusInDB,
+  createTransactionService,
 };
