@@ -2,26 +2,23 @@ import db from "../models/index";
 
 const autoUpdateStatusInDB = async () => {
   try {
-    // Lấy ngày hiện tại và format thành YYYY-MM-DD
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split("T")[0];
 
-    // Tìm tất cả giao dịch chưa trả
     const transactions = await db.Transactions.findAll({
       where: {
         status: {
-          [db.Sequelize.Op.ne]: "",
+          [db.Sequelize.Op.in]: ["Chờ trả", "Quá hạn"],
         },
       },
     });
 
-    // Phân loại và kiểm tra thay đổi
     const overdueTransactions = [];
     const waitingTransactions = [];
     let hasStatusChanges = false;
 
     transactions.forEach((trans) => {
-      const shouldBeOverdue = trans.return_date < currentDateString;
+      const shouldBeOverdue = trans.return_date < currentDateString; //true
 
       if (shouldBeOverdue && trans.status !== "Quá hạn") {
         overdueTransactions.push(trans.id);
@@ -32,7 +29,6 @@ const autoUpdateStatusInDB = async () => {
       }
     });
 
-    // Chỉ cập nhật nếu có thay đổi
     if (hasStatusChanges) {
       if (overdueTransactions.length > 0) {
         await db.Transactions.update(
@@ -74,7 +70,6 @@ const autoUpdateStatusInDB = async () => {
       };
     }
 
-    // Trả về response không có thay đổi
     return {
       EM: "",
       EC: 0,
@@ -96,7 +91,6 @@ const autoUpdateStatusInDB = async () => {
 
 const createTransactionService = async (data) => {
   try {
-    // Kiểm tra có sach đó hay ko
     const book = await db.Book.findByPk(data.bookId);
 
     if (!book) {
@@ -115,7 +109,6 @@ const createTransactionService = async (data) => {
       };
     }
 
-    // Tìm user dựa vào email
     const user = await db.User.findOne({
       where: { email: data.studentEmail },
     });
@@ -128,7 +121,6 @@ const createTransactionService = async (data) => {
       };
     }
 
-    // Tạo transaction với userId đã tìm được
     const transaction = await db.Transactions.create({
       bookId: data.bookId,
       userId: user.id,
@@ -137,7 +129,6 @@ const createTransactionService = async (data) => {
       status: data.status,
     });
 
-    // Giảm số lượng sách
     await book.update({
       quantity: book.quantity - 1,
     });
