@@ -15,7 +15,7 @@ const autoUpdateStatusInDB = async () => {
 
     const overdueTransactions = [];
     const waitingTransactions = [];
-    let hasStatusChanges = false;
+    let hasStatusChanges = false; //true
 
     transactions.forEach((trans) => {
       const shouldBeOverdue = trans.return_date < currentDateString; //true
