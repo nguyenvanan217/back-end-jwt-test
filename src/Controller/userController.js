@@ -71,12 +71,23 @@ const handleLogin = async (req, res) => {
 };
 const getAllUsers = async (req, res) => {
   try {
-    let data = await userService.getUser();
-    return res.status(200).json({
-      EM: data.EM,
-      EC: data.EC,
-      DT: data.DT,
-    });
+    if (req.query.page && req.query.limit) {
+      let page = req.query.page;
+      let limit = req.query.limit;
+      let data = await userService.getUserPagination(+page, +limit);
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    } else {
+      let data = await userService.getUser();
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    }
   } catch (error) {
     console.log("Error at getAllUsers: ", error);
     return res.status(500).json({

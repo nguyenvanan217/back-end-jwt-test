@@ -49,6 +49,55 @@ const getUser = async (req, res) => {
     };
   }
 };
+const getUserPagination = async (page, limit) => {
+  try {
+    let offset = (page - 1) * limit;
+
+    const { rows, count } = await db.User.findAndCountAll({
+      attributes: [
+        "id",
+        "username",
+        "email",
+        [
+          sequelize.fn("COUNT", sequelize.col("Transactions.bookId")),
+          "borrowedBooksCount",
+        ],
+      ],
+      include: [
+        {
+          model: db.Group,
+          attributes: ["name", "description", "id"],
+        },
+        {
+          model: db.Transactions,
+          attributes: ["status"],
+        },
+      ],
+      group: ["User.id", "Group.id"],
+      order: [["id", "DESC"]],
+      limit: limit,
+      offset: offset,
+      subQuery: false,
+    });
+
+    return {
+      EM: "Get all users successfully",
+      EC: 0,
+      DT: {
+        totalRows: count.length,
+        totalPages: Math.ceil(count.length / limit),
+        users: rows,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Something went wrong with the service!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 const deleteUser = async (id) => {
   try {
     await db.Transactions.destroy({
@@ -276,4 +325,5 @@ module.exports = {
   getStatus,
   getUserById,
   getAllUsersAndInfor,
+  getUserPagination,
 };

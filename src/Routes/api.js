@@ -13,7 +13,10 @@ const initAPIRoutes = (app) => {
     "/transactions/resolve-violation/:transactionId",
     transactionController.markViolationAsResolved
   );
-  router.post("/transactions/create", transactionController.createTransactionController)
+  router.post(
+    "/transactions/create",
+    transactionController.createTransactionController
+  );
   router.get("/users/get-all-user-infor", userController.getAllUsersAndInfor);
   router.put("/users/update", userController.updateUser);
   router.put(
