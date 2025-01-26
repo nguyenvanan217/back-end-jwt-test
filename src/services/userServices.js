@@ -22,7 +22,7 @@ const getUser = async (searchTerm = "") => {
           "borrowedBooksCount",
         ],
       ],
-      include: [
+      include: [ 
         {
           model: db.Group,
           attributes: ["name", "description", "id"],
