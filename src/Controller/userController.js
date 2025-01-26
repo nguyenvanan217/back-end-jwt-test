@@ -71,23 +71,45 @@ const handleLogin = async (req, res) => {
 };
 const getAllUsers = async (req, res) => {
   try {
-    if (req.query.page && req.query.limit) {
-      let page = req.query.page;
-      let limit = req.query.limit;
+    const search = req.query.search;
+    const page = req.query.page;
+    const limit = req.query.limit;
+
+    // Nếu có search term, lấy tất cả kết quả không phân trang
+    if (search && search.trim()) {
+      let data = await userService.getUser(search);
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: {
+          users: data.DT,
+          totalPages: 1,
+          totalRows: data.DT.length,
+        },
+      });
+    }
+
+    // Nếu không có search, thực hiện phân trang
+    if (page && limit) {
       let data = await userService.getUserPagination(+page, +limit);
       return res.status(200).json({
         EM: data.EM,
         EC: data.EC,
         DT: data.DT,
       });
-    } else {
-      let data = await userService.getUser();
-      return res.status(200).json({
-        EM: data.EM,
-        EC: data.EC,
-        DT: data.DT,
-      });
     }
+
+    // Trường hợp không có params
+    let data = await userService.getUser();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: {
+        users: data.DT,
+        totalPages: 1,
+        totalRows: data.DT.length,
+      },
+    });
   } catch (error) {
     console.log("Error at getAllUsers: ", error);
     return res.status(500).json({

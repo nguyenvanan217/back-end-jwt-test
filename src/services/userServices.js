@@ -1,10 +1,18 @@
 import { raw } from "body-parser";
 import db from "../models";
 import { sequelize } from "../models";
+import { Op } from "sequelize";
 
-const getUser = async (req, res) => {
+const getUser = async (searchTerm = "") => {
   try {
+    let searchCondition = searchTerm
+      ? {
+          username: { [Op.like]: `%${searchTerm}%` },
+        }
+      : {};
+
     let users = await db.User.findAll({
+      where: searchCondition,
       attributes: [
         "id",
         "username",
@@ -26,29 +34,24 @@ const getUser = async (req, res) => {
       ],
       group: ["User.id", "Group.id"],
       order: [["id", "DESC"]],
+      subQuery: false,
     });
-    if (users) {
-      return {
-        EM: "Get all users successfully",
-        EC: 0,
-        DT: users,
-      };
-    } else {
-      return {
-        EM: "No user found",
-        EC: 1,
-        DT: [],
-      };
-    }
+
+    return {
+      EM: "Get all users successfully",
+      EC: 0,
+      DT: users,
+    };
   } catch (error) {
     console.log(error);
     return {
-      EM: "something wrong width service !",
+      EM: "something wrong with service!",
       EC: 1,
       DT: [],
     };
   }
 };
+
 const getUserPagination = async (page, limit) => {
   try {
     let offset = (page - 1) * limit;
@@ -98,6 +101,7 @@ const getUserPagination = async (page, limit) => {
     };
   }
 };
+
 const deleteUser = async (id) => {
   try {
     await db.Transactions.destroy({
@@ -133,6 +137,7 @@ const deleteUser = async (id) => {
     };
   }
 };
+
 const updateCurrentUser = async (data) => {
   try {
     let user = await db.User.findOne({
@@ -275,6 +280,7 @@ const getUserById = async (id) => {
     };
   }
 };
+
 const getAllUsersAndInfor = async () => {
   try {
     let users = await db.User.findAll({
@@ -318,6 +324,7 @@ const getAllUsersAndInfor = async () => {
     };
   }
 };
+
 module.exports = {
   getUser,
   deleteUser,
