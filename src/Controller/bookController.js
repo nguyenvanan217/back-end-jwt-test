@@ -1,18 +1,33 @@
 import bookService from "../services/bookService";
 const readFunc = async (req, res) => {
   try {
-    let data = await bookService.getAllBook();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) ||10;
+    const search = req.query.search;
+
+    // Luôn sử dụng phân trang, có hoặc không có search
+    let data = await bookService.getAllBookPagination(page, limit, search);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
-      DT: data.DT,
+      DT: {
+        books: data.DT.books,
+        totalPages: data.DT.totalPages,
+        totalRows: data.DT.totalRows,
+        currentPage: page,
+      },
     });
   } catch (error) {
     console.log("Error at get all book: ", error);
     return res.status(500).json({
       EM: "Internal server error",
       EC: "-1",
-      DT: "",
+      DT: {
+        books: [],
+        totalPages: 0,
+        totalRows: 0,
+        currentPage: 1,
+      },
     });
   }
 };

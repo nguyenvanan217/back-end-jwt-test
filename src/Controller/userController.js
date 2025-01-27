@@ -104,11 +104,7 @@ const getAllUsers = async (req, res) => {
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
-      DT: {
-        users: data.DT,
-        totalPages: 1,
-        totalRows: data.DT.length,
-      },
+      DT: data.DT,
     });
   } catch (error) {
     console.log("Error at getAllUsers: ", error);

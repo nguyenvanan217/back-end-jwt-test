@@ -1,7 +1,22 @@
 import db from "../models";
-const getAllBook = async () => {
+import { Op } from "sequelize";
+const getAllBookPagination = async (page, limit, searchTerm = "") => {
   try {
-    let books = await db.Book.findAll({
+    let offset = (page - 1) * limit;
+
+    // Tạo điều kiện tìm kiếm
+    let whereCondition = {};
+    if (searchTerm) {
+      whereCondition = {
+        [Op.or]: [
+          { title: { [Op.like]: `%${searchTerm}%` } },
+          { author: { [Op.like]: `%${searchTerm}%` } },
+        ],
+      };
+    }
+
+    const { rows: books, count } = await db.Book.findAndCountAll({
+      where: whereCondition,
       attributes: [
         "id",
         "title",
@@ -16,26 +31,32 @@ const getAllBook = async () => {
           attributes: ["name"],
         },
       ],
+      order: [["id", "DESC"]],
+      limit: limit,
+      offset: offset,
     });
-    if (books) {
-      return {
-        EM: "Get all book successfully",
-        EC: 0,
-        DT: books,
-      };
-    } else {
-      return {
-        EM: "Book not found",
-        EC: 1,
-        DT: [],
-      };
-    }
+
+    return {
+      EM: "Get books successfully",
+      EC: 0,
+      DT: {
+        books: books,
+        totalRows: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+      },
+    };
   } catch (error) {
     console.log(error);
     return {
-      EM: "something wrong width service !",
+      EM: "Something went wrong with service!",
       EC: 1,
-      DT: [],
+      DT: {
+        books: [],
+        totalRows: 0,
+        totalPages: 0,
+        currentPage: 1,
+      },
     };
   }
 };
@@ -260,11 +281,11 @@ const deleteGenreById = async (id) => {
   }
 };
 module.exports = {
-  getAllBook,
   createBook,
   getAllGenre,
   deleteBook,
   updateBook,
   genresCreate,
   deleteGenreById,
+  getAllBookPagination,
 };
