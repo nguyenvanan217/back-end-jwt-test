@@ -22,7 +22,7 @@ const getUser = async (searchTerm = "") => {
           "borrowedBooksCount",
         ],
       ],
-      include: [ 
+      include: [
         {
           model: db.Group,
           attributes: ["name", "description", "id"],
@@ -252,7 +252,7 @@ const getUserById = async (id) => {
           include: [
             {
               model: db.Book,
-              attributes: ["title", "author", "cover_image"], // Chỉ lấy cột title từ bảng Book
+              attributes: ["title", "author", "cover_image"],
             },
           ],
         },
@@ -324,7 +324,127 @@ const getAllUsersAndInfor = async () => {
     };
   }
 };
+const getAllUsersAndInforWithSearch = async (search) => {
+  try {
+    let users = await db.User.findAll({
+      attributes: ["id", "username", "email"],
+      include: [
+        {
+          model: db.Transactions,
+          required: true,
+          attributes: ["id", "borrow_date", "return_date", "status"],
+          where: {
+            borrow_date: {
+              [Op.not]: null,
+            },
+            return_date: {
+              [Op.not]: null,
+            },
+          },
+          include: [
+            {
+              model: db.Book,
+              attributes: ["title", "cover_image", "quantity"],
+            },
+          ],
+        },
+      ],
+      where: {
+        username: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+      order: [["id", "DESC"]],
+      raw: true,
+      nest: true,
+    });
 
+    if (users && users.length > 0) {
+      return {
+        EM: "Lấy thông tin sinh viên mượn sách thành công",
+        EC: 0,
+        DT: users,
+      };
+    }
+
+    return {
+      EM: "Không tìm thấy sinh viên mượn sách",
+      EC: 1,
+      DT: [],
+    };
+  } catch (error) {
+    console.error("Error in getAllUsersAndInforWithSearch:", error);
+    return {
+      EM: "Lỗi dịch vụ!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+const getAllUsersAndInforWithPaginate = async (page, limit) => {
+  try {
+    const offset = (page - 1) * limit;
+    const { rows, count } = await db.User.findAndCountAll({
+      attributes: ["id", "username", "email"],
+      include: [
+        {
+          model: db.Transactions,
+          required: true,
+          attributes: ["id", "borrow_date", "return_date", "status"],
+          where: {
+            borrow_date: {
+              [Op.not]: null,
+            },
+            return_date: {
+              [Op.not]: null,
+            },
+          },
+          include: [
+            {
+              model: db.Book,
+              attributes: ["id", "title"],
+            },
+          ],
+        },
+      ],
+      limit: limit,
+      offset: offset,
+      raw: true,
+      nest: true,
+      order: [["id", "DESC"]],
+      subQuery: false,
+    });
+
+    if (count === 0) {
+      return {
+        EM: "Không tìm thấy sinh viên nào đã mượn sách",
+        EC: 0,
+        DT: {
+          totalRows: 0,
+          totalPages: 0,
+          users: [],
+        },
+      };
+    }
+    const totalPages = Math.ceil(count / limit);
+    return {
+      EM: "Lấy danh sách sinh viên mượn sách thành công",
+      EC: 0,
+      DT: {
+        totalRows: count,
+        totalPages: totalPages,
+        users: rows,
+      },
+    };
+  } catch (error) {
+    console.error("Error in getAllUsersAndInforWithPaginate:", error);
+    return {
+      EM: "Lỗi dịch vụ!",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
 module.exports = {
   getUser,
   deleteUser,
@@ -333,4 +453,6 @@ module.exports = {
   getUserById,
   getAllUsersAndInfor,
   getUserPagination,
+  getAllUsersAndInforWithSearch,
+  getAllUsersAndInforWithPaginate,
 };

@@ -187,6 +187,34 @@ const getUserDetailsById = async (req, res) => {
 };
 const getAllUsersAndInfor = async (req, res) => {
   try {
+    const search = req.query.search;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+
+    // Validate page và limit
+    if (page && limit) {
+      if (page < 1 || limit < 1) {
+        return res.status(400).json({
+          EM: "Invalid page or limit value",
+          EC: 1,
+          DT: "",
+        });
+      }
+      let data = await userService.getAllUsersAndInforWithPaginate(page, limit);
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    }
+    if (search && search.trim()) {
+      let data = await userService.getAllUsersAndInforWithSearch(search);
+      return res.status(200).json({
+        EM: data.EM,
+        EC: data.EC,
+        DT: data.DT,
+      });
+    }
     let data = await userService.getAllUsersAndInfor();
     return res.status(200).json({
       EM: data.EM,
