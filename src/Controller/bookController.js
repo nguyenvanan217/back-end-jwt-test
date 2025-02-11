@@ -20,7 +20,7 @@ const readFunc = async (req, res) => {
   } catch (error) {
     console.log("Error at get all book: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: {
         books: [],
@@ -44,7 +44,7 @@ const createBook = async (req, res) => {
   } catch (error) {
     console.log("Error at create book: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -61,7 +61,7 @@ const readGenre = async (req, res) => {
   } catch (error) {
     console.log("Error at read genre: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -79,7 +79,7 @@ const deleteBook = async (req, res) => {
   } catch (error) {
     console.log("Error at delete book: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -98,7 +98,7 @@ const updateBook = async (req, res) => {
   } catch (error) {
     console.log("Error at update book: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -115,7 +115,7 @@ const addGenres = async (req, res) => {
   } catch (error) {
     console.log("Error at add genres: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -133,7 +133,7 @@ const deleteGenre = async (req, res) => {
   } catch (error) {
     console.log("Error at delete genre: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });

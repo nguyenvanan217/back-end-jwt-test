@@ -37,7 +37,7 @@ const getAllBookPagination = async (page, limit, searchTerm = "") => {
     });
 
     return {
-      EM: "Get books successfully",
+      EM: "Lấy danh sách sách thành công",
       EC: 0,
       DT: {
         books: books,
@@ -49,7 +49,7 @@ const getAllBookPagination = async (page, limit, searchTerm = "") => {
   } catch (error) {
     console.log(error);
     return {
-      EM: "Something went wrong with service!",
+      EM: "Có lỗi xảy ra ở service!",
       EC: 1,
       DT: {
         books: [],
@@ -99,13 +99,13 @@ const getAllGenre = async () => {
     let genres = await db.Genres.findAll();
     if (genres) {
       return {
-        EM: "Get all genre successfully",
+        EM: "Lấy tất cả thể loại thành công",
         EC: 0,
         DT: genres,
       };
     } else {
       return {
-        EM: "Genre not found",
+        EM: "Không tìm thấy thể loại",
         EC: 1,
         DT: [],
       };

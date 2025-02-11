@@ -10,14 +10,14 @@ const handleRegister = async (req, res) => {
     const { email, username, password } = req.body;
     if (!email || !password) {
       return res.status(200).json({
-        EM: "Missing required fields",
+        EM: "Thiếu các trường bắt buộc",
         EC: "-1",
         DT: "",
       });
     }
     if (password && password.length < 4) {
       return res.status(200).json({
-        EM: "Your password must have more than 3 letters",
+        EM: "Mật khẩu phải có nhiều hơn 3 ký tự",
         EC: "1",
         DT: "",
       });
@@ -31,7 +31,7 @@ const handleRegister = async (req, res) => {
   } catch (error) {
     console.log("Error at handleRegister: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -109,7 +109,7 @@ const getAllUsers = async (req, res) => {
   } catch (error) {
     console.log("Error at getAllUsers: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -126,7 +126,7 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     console.log("Error at deleteUser: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -143,7 +143,7 @@ const updateUser = async (req, res) => {
   } catch (error) {
     console.log("Error at updateUser: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -161,7 +161,7 @@ const getStatusById = async (req, res) => {
   } catch (error) {
     console.log("Error at get Status: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -179,7 +179,7 @@ const getUserDetailsById = async (req, res) => {
   } catch (error) {
     console.log("Error at getUserDetailsById: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });
@@ -224,7 +224,7 @@ const getAllUsersAndInfor = async (req, res) => {
   } catch (error) {
     console.log("Error at getAllUsersAndInfor: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });

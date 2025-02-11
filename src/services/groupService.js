@@ -1,16 +1,16 @@
-import db from '../models/index';
+import db from "../models/index";
 const getGroup = async () => {
   try {
     let groups = await db.Group.findAll();
     if (groups) {
       return {
-        EM: "Get all groups successfully",
+        EM: "Lấy tất cả nhóm thành công",
         EC: 0,
         DT: groups,
       };
     } else {
       return {
-        EM: "No group found",
+        EM: "Không tìm thấy nhóm nào",
         EC: 1,
         DT: [],
       };
@@ -18,7 +18,7 @@ const getGroup = async () => {
   } catch (error) {
     console.log(error);
     return {
-      EM: "something wrong width service !",
+      EM: "Có lỗi xảy ra ở service!",
       EC: 1,
       DT: [],
     };

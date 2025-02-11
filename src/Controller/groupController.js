@@ -10,7 +10,7 @@ const readFunc = async (req, res) => {
   } catch (error) {
     console.log("Error at getAllGroups: ", error);
     return res.status(500).json({
-      EM: "Internal server error",
+      EM: "Lỗi máy chủ nội bộ",
       EC: "-1",
       DT: "",
     });

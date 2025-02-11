@@ -22,7 +22,7 @@ const registerNewUser = async (rawData) => {
     let isEmailExist = await checkEmailExist(rawData.email);
     if (isEmailExist === true) {
       return {
-        EM: "Email is already in use",
+        EM: "Email đã được sử dụng",
         EC: "1",
       };
     }
@@ -34,13 +34,13 @@ const registerNewUser = async (rawData) => {
       groupId: 2,
     });
     return {
-      EM: "Register successfully",
+      EM: "Đăng ký thành công",
       EC: "0",
     };
   } catch (error) {
     console.log("Error at registerNewUser: ", error);
     return {
-      EM: "Something wrongs in service....",
+      EM: "Có lỗi xảy ra với dịch vụ...",
       EC: "-2",
     };
   }
@@ -54,14 +54,14 @@ const loginUser = async (rawData) => {
     });
     if (!user) {
       return {
-        EM: "Email is not exist",
+        EM: "Email không tồn tại",
         EC: "1",
       };
     }
     let checkPassword = bcrypt.compareSync(rawData.password, user.password);
     if (checkPassword === false) {
       return {
-        EM: "Email or Password is not correct",
+        EM: "Email hoặc mật khẩu không chính xác",
         EC: "2",
       };
     }
@@ -72,7 +72,7 @@ const loginUser = async (rawData) => {
     };
     const token = createJWT(payload);
     return {
-      EM: "Login successfully",
+      EM: "Đăng nhập thành công",
       EC: "0",
       DT: {
         access_token: token,
@@ -81,7 +81,7 @@ const loginUser = async (rawData) => {
   } catch (error) {
     console.log("Error at loginUser: ", error);
     return {
-      EM: "Something wrongs in service....",
+      EM: "Có lỗi xảy ra với dịch vụ...",
       EC: "-2",
     };
   }

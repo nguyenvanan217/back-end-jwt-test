@@ -38,14 +38,14 @@ const getUser = async (searchTerm = "") => {
     });
 
     return {
-      EM: "Get all users successfully",
+      EM: "Lấy tất cả người dùng thành công",
       EC: 0,
       DT: users,
     };
   } catch (error) {
     console.log(error);
     return {
-      EM: "something wrong with service!",
+      EM: "Có lỗi xảy ra ở service!",
       EC: 1,
       DT: [],
     };
@@ -117,13 +117,13 @@ const deleteUser = async (id) => {
     if (user) {
       await user.destroy();
       return {
-        EM: "Delete user successfully",
+        EM: "Xóa người dùng thành công",
         EC: 0,
         DT: [],
       };
     } else {
       return {
-        EM: "User not found",
+        EM: "Không tìm thấy người dùng",
         EC: 1,
         DT: [],
       };
