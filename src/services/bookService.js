@@ -49,7 +49,7 @@ const getAllBookPagination = async (page, limit, searchTerm = "") => {
   } catch (error) {
     console.log(error);
     return {
-      EM: "Có lỗi xảy ra ở service!",
+      EM: "something wrong width service !",
       EC: 1,
       DT: {
         books: [],
@@ -67,7 +67,7 @@ const createBook = async (data) => {
     let genre = await db.Genres.findOne({ where: { name: data.genre_name } });
     if (!genre) {
       return {
-        EM: "Genre not found!",
+        EM: "Không tìm thấy thể loại!",
         EC: 1,
         DT: [],
       };
@@ -80,7 +80,7 @@ const createBook = async (data) => {
       genreId: genre.id,
     });
     return {
-      EM: "Create book successfully",
+      EM: "Thêm sách mới thành công",
       EC: 0,
       DT: book,
     };
@@ -125,13 +125,13 @@ const deleteBook = async (id) => {
     let book = await db.Book.destroy({ where: { id } });
     if (book) {
       return {
-        EM: "Delete book successfully",
+        EM: "Xóa sách thành công",
         EC: 0,
         DT: book,
       };
     } else {
       return {
-        EM: "Book not found",
+        EM: "Không tìm thấy sách",
         EC: 1,
         DT: [],
       };
@@ -212,7 +212,7 @@ const updateBook = async (id, data) => {
     });
 
     return {
-      EM: "Update book successfully",
+      EM: "Cập nhật sách thành công",
       EC: 0,
       DT: [],
     };

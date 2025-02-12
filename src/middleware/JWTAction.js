@@ -14,15 +14,37 @@ const createJWT = (payload) => {
 };
 const verifyJWT = (token) => {
   let key = process.env.JWT_SECRET;
-  let data = null;
+  let decoded = null;
   try {
-    let decoded = jwt.verify(token, key);
-    data = decoded;
+    decoded = jwt.verify(token, key);
   } catch (error) {
     console.log("error verifyJWT", error);
   }
   // console.log("data", data);
-  return data;
+  return decoded;
 };
-
-module.exports = { createJWT, verifyJWT };
+const checkUserJWT = (req, res, next) => {
+  let cookies = req.cookies;
+  console.log("cookies", cookies.access_token);
+  if (cookies && cookies.access_token) {
+    let token = cookies.access_token;
+    let decoded = verifyJWT(token);
+    if (decoded) {
+      req.user = decoded;
+      next();
+    } else {
+      return res.status(401).json({
+        EM: "Unauthorized users. Please log in ...",
+        EC: -1,
+        DT: "",
+      });
+    }
+  } else {
+    return res.status(401).json({
+      EM: "Unauthorized users. Please log in ...",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+module.exports = { createJWT, verifyJWT, checkUserJWT };

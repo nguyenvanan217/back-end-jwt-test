@@ -3,11 +3,12 @@ import userController from "../Controller/userController";
 import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
+import { checkUserJWT } from "../middleware/JWTAction";
 let router = express.Router();
 const initAPIRoutes = (app) => {
   router.post("/register", userController.handleRegister);
   router.post("/login", userController.handleLogin);
-  router.get("/users/read", userController.getAllUsers);
+  router.get("/users/read", checkUserJWT, userController.getAllUsers);
   router.delete("/users/delete", userController.deleteUser);
   router.put(
     "/transactions/resolve-violation/:transactionId",

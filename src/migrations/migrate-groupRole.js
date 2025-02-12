@@ -10,9 +10,21 @@ module.exports = {
       },
       groupId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Group",
+          key: "id",
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       roleId: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Role", 
+          key: "id",
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

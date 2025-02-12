@@ -9,7 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Role.belongsToMany(models.Group, { through: models.Group_Role, foreignKey: "roleId" });
+      Role.belongsToMany(models.Group, {
+        through: models.Group_Role,
+        foreignKey: "roleId",
+      });
     }
   }
   Role.init(

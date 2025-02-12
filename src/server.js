@@ -6,7 +6,7 @@ import Connection from "./configs/connectdb";
 import initAPIRoutes from "./Routes/api";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { verifyJWT } from "./middleware/JWTAction";
+// import { verifyJWT } from "./middleware/JWTAction";
 require("dotenv").config();
 
 let app = express();

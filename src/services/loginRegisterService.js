@@ -1,4 +1,5 @@
 import { createJWT } from "../middleware/JWTAction";
+import { getGroupWithRole } from "./jwtService";
 import db from "../models/index";
 let bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(10);
@@ -65,10 +66,13 @@ const loginUser = async (rawData) => {
         EC: "2",
       };
     }
+    let groupWithRole = await getGroupWithRole(user);
+    console.log(">>>>>>>>>>>>>check groupWithRole", groupWithRole);
     const payload = {
       email: user.email,
       username: user.username,
       groupId: user.groupId,
+      groupWithRole,
     };
     const token = createJWT(payload);
     return {
@@ -76,6 +80,7 @@ const loginUser = async (rawData) => {
       EC: "0",
       DT: {
         access_token: token,
+        groupWithRole,
       },
     };
   } catch (error) {
