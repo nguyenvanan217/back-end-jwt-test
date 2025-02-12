@@ -44,6 +44,8 @@ const initAPIRoutes = (app) => {
 
   router.get("/groups/read", groupController.readFunc);
 
+  router.post("/logout", userController.handleLogout);
+
   return app.use("/api/v1", router);
 };
 export default initAPIRoutes;

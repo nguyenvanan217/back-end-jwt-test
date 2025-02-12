@@ -69,6 +69,23 @@ const handleLogin = async (req, res) => {
     });
   }
 };
+const handleLogout = async (req, res) => {
+  try {
+    res.clearCookie("access_token");
+    return res.status(200).json({
+      EM: "Đăng xuất thành công",
+      EC: 0,
+      DT: "",
+    });
+  } catch (error) {
+    console.log("Error at handleLogout: ", error);
+    return res.status(500).json({
+      EM: "Lỗi máy chủ nội bộ",
+      EC: "-1",
+      DT: "",
+    });
+  }
+};
 const getAllUsers = async (req, res) => {
   try {
     const search = req.query.search;
@@ -234,6 +251,7 @@ export default {
   testApi,
   handleRegister,
   handleLogin,
+  handleLogout,
   getAllUsers,
   deleteUser,
   updateUser,
