@@ -38,7 +38,6 @@ const handleRegister = async (req, res) => {
   }
 };
 const handleLogin = async (req, res) => {
-  // console.log("req.cookies", req.cookies);
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -87,6 +86,8 @@ const handleLogout = async (req, res) => {
   }
 };
 const getAllUsers = async (req, res) => {
+  console.log("req.cookies", req.cookies);
+  console.log(">>>>>>>>>>>>>req.user", req.user);
   try {
     const search = req.query.search;
     const page = req.query.page;

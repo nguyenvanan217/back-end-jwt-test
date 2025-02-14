@@ -3,50 +3,48 @@ import userController from "../Controller/userController";
 import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
-import { checkUserJWT } from "../middleware/JWTAction";
+import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
+
 let router = express.Router();
 const initAPIRoutes = (app) => {
-  router.post("/register", userController.handleRegister);
-  router.post("/login", userController.handleLogin);
-  router.get("/users/read", checkUserJWT, userController.getAllUsers);
-  router.delete("/users/delete", userController.deleteUser);
-  router.put(
-    "/transactions/resolve-violation/:transactionId",
-    transactionController.markViolationAsResolved
-  );
-  router.post(
-    "/transactions/create",
-    transactionController.createTransactionController
-  );
-  router.get("/users/get-all-user-infor", userController.getAllUsersAndInfor);
-  router.put("/users/update", userController.updateUser);
-  router.put(
-    "/transactions/update-date-and-status",
-    transactionController.updateDateAndStatus
-  );
-  router.put(
-    "/transactions/autoupdatestatus",
-    transactionController.autoUpdateStatusInDB
-  );
-  router.delete(
-    "/transactions/delete/:id",
-    transactionController.deleteTransaction
-  );
-  router.get("/users/read/:id", userController.getUserDetailsById);
-  router.get("/status/read/:id", userController.getStatusById);
+  // Middleware kiểm tra JWT và phân quyền cho tất cả routes
+  app.all("*", checkUserJWT, checkUserPermission);
 
-  router.get("/genres/read", bookController.readGenre);
-  router.get("/books/read", bookController.readFunc);
-  router.post("/books/create", bookController.createBook);
-  router.delete("/books/delete/:id", bookController.deleteBook);
-  router.post("/genres/create", bookController.addGenres);
-  router.delete("/genres/delete/:id", bookController.deleteGenre);
-  router.put("/books/update/:id", bookController.updateBook);
+  // Authentication routes
+  router.post("/register", userController.handleRegister);         // Đăng ký tài khoản mới
+  router.post("/login", userController.handleLogin);               // Đăng nhập
+  router.post("/logout", userController.handleLogout);             // Đăng xuất
 
-  router.get("/groups/read", groupController.readFunc);
+  // User management routes
+  router.get("/users/read", userController.getAllUsers);           // Lấy danh sách người dùng
+  router.delete("/users/delete", userController.deleteUser);       // Xóa người dùng
+  router.get("/users/get-all-user-infor", userController.getAllUsersAndInfor);  // Lấy thông tin chi tiết tất cả người dùng
+  router.put("/users/update", userController.updateUser);          // Cập nhật thông tin người dùng
+  router.get("/users/read/:id", userController.getUserDetailsById);// Lấy thông tin chi tiết một người dùng
+  router.get("/status/read/:id", userController.getStatusById);    // Lấy trạng thái người dùng
 
-  router.post("/logout", userController.handleLogout);
+  // Transaction routes
+  router.post("/transactions/create", transactionController.createTransactionController);    // Tạo giao dịch mới
+  router.put("/transactions/resolve-violation/:transactionId", transactionController.markViolationAsResolved);  // Xử lý vi phạm
+  router.put("/transactions/update-date-and-status", transactionController.updateDateAndStatus);  // Cập nhật ngày và trạng thái
+  router.put("/transactions/autoupdatestatus", transactionController.autoUpdateStatusInDB);  // Tự động cập nhật trạng thái
+  router.delete("/transactions/delete/:id", transactionController.deleteTransaction);  // Xóa giao dịch
+
+  // Book management routes
+  router.get("/books/read", bookController.readFunc);             // Lấy danh sách sách
+  router.post("/books/create", bookController.createBook);        // Thêm sách mới
+  router.delete("/books/delete/:id", bookController.deleteBook);  // Xóa sách
+  router.put("/books/update/:id", bookController.updateBook);     // Cập nhật thông tin sách
+
+  // Genre management routes
+  router.get("/genres/read", bookController.readGenre);           // Lấy danh sách thể loại
+  router.post("/genres/create", bookController.addGenres);        // Thêm thể loại mới
+  router.delete("/genres/delete/:id", bookController.deleteGenre);// Xóa thể loại
+
+  // Group management routes
+  router.get("/groups/read", groupController.readFunc);           // Lấy danh sách nhóm người dùng
 
   return app.use("/api/v1", router);
 };
+
 export default initAPIRoutes;

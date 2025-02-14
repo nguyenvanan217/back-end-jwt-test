@@ -1,5 +1,12 @@
 require("dotenv").config();
 var jwt = require("jsonwebtoken");
+
+const nonSecurePaths = ["/login", "/register", "/logout"];
+const apiPrefix = "/api/v1";
+
+
+
+
 const createJWT = (payload) => {
   let key = process.env.JWT_SECRET;
   let token = null;
@@ -24,8 +31,11 @@ const verifyJWT = (token) => {
   return decoded;
 };
 const checkUserJWT = (req, res, next) => {
+  console.log(">>>>>>>>>>>>>>>req.path", req.path);
+  if (nonSecurePaths.some(p => req.path === p || req.path === apiPrefix + p)) {
+    return next();
+  }
   let cookies = req.cookies;
-  console.log("cookies", cookies.access_token);
   if (cookies && cookies.access_token) {
     let token = cookies.access_token;
     let decoded = verifyJWT(token);
@@ -47,4 +57,30 @@ const checkUserJWT = (req, res, next) => {
     });
   }
 };
-module.exports = { createJWT, verifyJWT, checkUserJWT };
+const checkUserPermission = (req, res, next) => {
+  if (nonSecurePaths.some(p => req.path === p || req.path === apiPrefix + p)) {
+    return next();
+  }
+  if (req.user) {
+    let roles = req.user.groupWithRole.roles;
+    let currentUrl = req.path;
+    if (!roles || roles.length === 0) {
+      return res.status(403).json({
+        EM: "You don't have permission to access this resource",
+        EC: -1,
+        DT: "",
+      });
+    }
+    let canAccess = roles.some((role) => currentUrl.includes(role.url));
+    if (canAccess) {
+      next();
+    } else {
+      return res.status(403).json({
+        EM: "You don't have permission to access this resource",
+        EC: -1,
+        DT: "",
+      });
+    }
+  }
+};
+module.exports = { createJWT, verifyJWT, checkUserJWT, checkUserPermission };

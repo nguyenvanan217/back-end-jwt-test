@@ -22,13 +22,23 @@ const getGroupWithRole = async (user) => {
     });
 
     if (group && group.Roles) {
-      return group.Roles.map((role) => ({
-        id: role.get("id"),
-        url: role.get("url"),
-        description: role.get("description"),
-      }));
+      return {
+        group: {
+          id: group.get("id"),
+          name: group.get("name"),
+          description: group.get("description")
+        },
+        roles: group.Roles.map((role) => ({
+          id: role.get("id"),
+          url: role.get("url"),
+          description: role.get("description"),
+        }))
+      };
     }
-    return [];
+    return {
+      group: null,
+      roles: []
+    };
   } catch (error) {
     console.error("Error in getGroupWithRole:", error);
     throw error;
