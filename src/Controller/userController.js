@@ -79,7 +79,7 @@ const handleLogout = async (req, res) => {
   } catch (error) {
     console.log("Error at handleLogout: ", error);
     return res.status(500).json({
-      EM: "Lỗi máy chủ nội bộ",
+      EM: "Lỗi máy chủ nội bộ", 
       EC: "-1",
       DT: "",
     });
