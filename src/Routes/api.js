@@ -44,6 +44,8 @@ const initAPIRoutes = (app) => {
   // Group management routes
   router.get("/groups/read", groupController.readFunc);           // Lấy danh sách nhóm người dùng
 
+  // API get Account xử lý khi load lại trang ở front end giúp không mất thông tin của context phía front end
+  router.get("/account", userController.getAccount);
   return app.use("/api/v1", router);
 };
 

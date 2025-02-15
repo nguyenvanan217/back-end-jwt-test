@@ -31,7 +31,6 @@ const verifyJWT = (token) => {
   return decoded;
 };
 const checkUserJWT = (req, res, next) => {
-  console.log(">>>>>>>>>>>>>>>req.path", req.path);
   if (nonSecurePaths.some(p => req.path === p || req.path === apiPrefix + p)) {
     return next();
   }
@@ -41,6 +40,7 @@ const checkUserJWT = (req, res, next) => {
     let decoded = verifyJWT(token);
     if (decoded) {
       req.user = decoded;
+      req.token = token;
       next();
     } else {
       return res.status(401).json({
@@ -58,6 +58,9 @@ const checkUserJWT = (req, res, next) => {
   }
 };
 const checkUserPermission = (req, res, next) => {
+  if (req.path === "/account" || req.path === apiPrefix + "/account") {
+    return next();
+  }
   if (nonSecurePaths.some(p => req.path === p || req.path === apiPrefix + p)) {
     return next();
   }

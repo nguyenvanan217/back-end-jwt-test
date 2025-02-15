@@ -86,8 +86,6 @@ const handleLogout = async (req, res) => {
   }
 };
 const getAllUsers = async (req, res) => {
-  console.log("req.cookies", req.cookies);
-  console.log(">>>>>>>>>>>>>req.user", req.user);
   try {
     const search = req.query.search;
     const page = req.query.page;
@@ -248,6 +246,18 @@ const getAllUsersAndInfor = async (req, res) => {
     });
   }
 };
+const getAccount = async (req, res) => {
+  return res.status(200).json({
+    EM: "Get User Account OK!",
+    EC: 0,
+    DT: {
+      access_token: req.token,
+      groupWithRoles: req.user.groupWithRole,
+      email: req.user.email,
+      username: req.user.username,
+    },
+  });
+};
 module.exports = {
   testApi,
   handleRegister,
@@ -259,4 +269,5 @@ module.exports = {
   getStatusById,
   getUserDetailsById,
   getAllUsersAndInfor,
+  getAccount
 };

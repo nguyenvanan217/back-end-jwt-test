@@ -67,7 +67,6 @@ const loginUser = async (rawData) => {
       };
     }
     let groupWithRole = await getGroupWithRole(user);
-    console.log(">>>>>>>>>>>>>check groupWithRole", groupWithRole);
     const payload = {
       email: user.email,
       username: user.username,
@@ -79,6 +78,8 @@ const loginUser = async (rawData) => {
       EM: "Đăng nhập thành công",
       EC: "0",
       DT: {
+        email: user.email,
+        username: user.username,
         access_token: token,
         groupWithRole,
       },
