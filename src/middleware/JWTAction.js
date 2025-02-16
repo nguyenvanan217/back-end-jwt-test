@@ -4,9 +4,6 @@ var jwt = require("jsonwebtoken");
 const nonSecurePaths = ["/login", "/register", "/logout"];
 const apiPrefix = "/api/v1";
 
-
-
-
 const createJWT = (payload) => {
   let key = process.env.JWT_SECRET;
   let token = null;
@@ -30,13 +27,23 @@ const verifyJWT = (token) => {
   // console.log("data", data);
   return decoded;
 };
+const extractToken = (req, res) => {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "Bearer"
+  ) {
+    return req.headers.authorization.split(" ")[1];
+  }
+  return null;
+};
 const checkUserJWT = (req, res, next) => {
   if (nonSecurePaths.some(p => req.path === p || req.path === apiPrefix + p)) {
     return next();
   }
   let cookies = req.cookies;
-  if (cookies && cookies.access_token) {
-    let token = cookies.access_token;
+  let tokenFromHeader = extractToken(req);
+  if ((cookies && cookies.access_token) || tokenFromHeader) {
+    let token = cookies && cookies.access_token ? cookies.access_token : tokenFromHeader;
     let decoded = verifyJWT(token);
     if (decoded) {
       req.user = decoded;
