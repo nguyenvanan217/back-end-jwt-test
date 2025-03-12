@@ -122,7 +122,12 @@ const getAllGenre = async () => {
 
 const deleteBook = async (id) => {
   try {
+    // Xóa tất cả giao dịch liên quan trước
+    await db.Transactions.destroy({ where: { bookId: id } });
+
+    // Sau đó xóa sách
     let book = await db.Book.destroy({ where: { id } });
+
     if (book) {
       return {
         EM: "Xóa sách thành công",
@@ -139,12 +144,13 @@ const deleteBook = async (id) => {
   } catch (error) {
     console.log(error);
     return {
-      EM: "something wrong width service !",
+      EM: "Lỗi trong quá trình xử lý",
       EC: 1,
       DT: [],
     };
   }
 };
+
 const updateBook = async (id, data) => {
   try {
     // Lấy dữ liệu hiện tại của sách từ DB

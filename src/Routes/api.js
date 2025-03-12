@@ -3,8 +3,8 @@ import userController from "../Controller/userController";
 import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
+import roleController from "../Controller/roleController";
 import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
-
 let router = express.Router();
 const initAPIRoutes = (app) => {
   // Middleware kiểm tra JWT và phân quyền cho tất cả routes
@@ -43,6 +43,9 @@ const initAPIRoutes = (app) => {
 
   // Group management routes
   router.get("/groups/read", groupController.readFunc);           // Lấy danh sách nhóm người dùng
+
+  router.get("/roles/read", roleController.readFunc);            // Lấy danh sách vai trò
+  router.get("/roles/read-group-with-role/:id", roleController.readGroupWithRole); // Lấy danh sách nhóm người dùng và vai trò
 
   // API get Account xử lý khi load lại trang ở front end giúp không mất thông tin của context phía front end
   router.get("/account", userController.getAccount);

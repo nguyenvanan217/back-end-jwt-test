@@ -29,6 +29,7 @@ module.exports = {
       { id: 19, url: '/genres/create', description: 'Thêm thể loại' },
       { id: 20, url: '/genres/delete', description: 'Xóa thể loại' },
       { id: 21, url: '/groups/read', description: 'Xem danh sách nhóm' },
+      { id: 22, url: '/roles/read', description: 'Xem danh sách vai trò' },
     ].map(role => ({
       ...role,
       createdAt: new Date(),

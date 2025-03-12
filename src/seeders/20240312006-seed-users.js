@@ -10,8 +10,8 @@ module.exports = {
     );
     console.log(groups)
 
-    const adminGroup = groups.find(g => g.name === 'Admin');
-    const studentGroup = groups.find(g => g.name === 'Student');
+    const adminGroup = groups.find(g => g.name === 'Quản Lý Thư Viện');
+    const studentGroup = groups.find(g => g.name === 'Sinh Viên');
     await queryInterface.bulkInsert('Users', [
       { 
         id: 1,

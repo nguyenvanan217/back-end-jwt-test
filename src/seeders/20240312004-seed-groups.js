@@ -8,8 +8,8 @@ module.exports = {
     await queryInterface.sequelize.query('ALTER TABLE Groups AUTO_INCREMENT = 1;');
 
     const groups = [
-      { id: 1, name: 'Admin', description: 'Quản trị viên - có toàn quyền quản lý hệ thống' },
-      { id: 2, name: 'Student', description: 'Sinh viên - chỉ có quyền đăng ký, đăng nhập và xem sách' },
+      { id: 1, name: 'Quản Lý Thư Viện', description: 'Quản trị viên - có toàn quyền quản lý hệ thống' },
+      { id: 2, name: 'Sinh Viên', description: 'Sinh viên - chỉ có quyền đăng ký, đăng nhập và xem sách' },
     ].map(group => ({
       ...group,
       createdAt: new Date(),

@@ -57,8 +57,8 @@ module.exports = {
 
     // Seed dữ liệu cho Groups
     await queryInterface.bulkInsert('Groups', [
-      { name: 'Admin', description: 'Quản trị viên - có toàn quyền quản lý hệ thống', createdAt: new Date(), updatedAt: new Date() },
-      { name: 'Student', description: 'Sinh viên - chỉ có quyền đăng ký, đăng nhập và xem sách', createdAt: new Date(), updatedAt: new Date() },
+      { name: 'Quản Lý Thư Viện', description: 'Quản trị viên - có toàn quyền quản lý hệ thống', createdAt: new Date(), updatedAt: new Date() },
+      { name: 'Sinh Viên', description: 'Sinh viên - chỉ có quyền đăng ký, đăng nhập và xem sách', createdAt: new Date(), updatedAt: new Date() },
     ]);
 
     // Seed dữ liệu cho GroupRoles (Phân quyền)
