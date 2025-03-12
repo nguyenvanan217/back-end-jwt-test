@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("groupRole", {
+    await queryInterface.createTable("GroupRoles", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,7 +11,7 @@ module.exports = {
       groupId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Group",
+          model: "Groups",
           key: "id",
         },
         onDelete: 'CASCADE',
@@ -20,7 +20,7 @@ module.exports = {
       roleId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Role", 
+          model: "Roles", 
           key: "id",
         },
         onDelete: 'CASCADE',

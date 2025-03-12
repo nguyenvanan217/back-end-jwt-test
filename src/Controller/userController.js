@@ -252,9 +252,9 @@ const getAccount = async (req, res) => {
     EC: 0,
     DT: {
       access_token: req.token,
-      groupWithRoles: req.user.groupWithRole,
-      email: req.user.email,
-      username: req.user.username,
+      groupWithRoles: req?.user?.groupWithRole,
+      email: req?.user?.email,
+      username: req?.user?.username,
     },
   });
 };

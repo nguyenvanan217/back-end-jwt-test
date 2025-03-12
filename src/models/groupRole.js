@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Group_Role",
-      tableName: "groupRole",
+      tableName: "GroupRoles",
     }
   );
   return Group_Role;

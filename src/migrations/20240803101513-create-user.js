@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -20,7 +20,7 @@ module.exports = {
       groupId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Group",
+          model: "Groups",
           key: "id",
         },
         onDelete: 'SET NULL',
