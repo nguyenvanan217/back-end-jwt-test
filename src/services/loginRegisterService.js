@@ -68,6 +68,7 @@ const loginUser = async (rawData) => {
     }
     let groupWithRole = await getGroupWithRole(user);
     const payload = {
+      id: user.id,
       email: user.email,
       username: user.username,
       groupId: user.groupId,
@@ -78,6 +79,7 @@ const loginUser = async (rawData) => {
       EM: "Đăng nhập thành công",
       EC: "0",
       DT: {
+        id: user.id,
         email: user.email,
         username: user.username,
         access_token: token,

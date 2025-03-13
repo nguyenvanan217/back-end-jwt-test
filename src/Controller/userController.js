@@ -252,6 +252,7 @@ const getAccount = async (req, res) => {
     DT: {
       access_token: req.token,
       groupWithRoles: req?.user?.groupWithRole,
+      id: req?.user?.id,
       email: req?.user?.email,
       username: req?.user?.username,
     },
