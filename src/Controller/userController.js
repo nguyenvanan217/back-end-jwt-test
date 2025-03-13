@@ -90,7 +90,6 @@ const getAllUsers = async (req, res) => {
     const search = req.query.search;
     const page = req.query.page;
     const limit = req.query.limit;
-    console.log("req.user", req.user);
     // Nếu có search term, lấy tất cả kết quả không phân trang
     if (search && search.trim()) {
       let data = await userService.getUser(search);

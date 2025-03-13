@@ -44,6 +44,6 @@ initWebRoutes(app);
 initAPIRoutes(app);
 // Gọi testTransactions() sau khi khởi động app
 app.listen(process.env.PORT || 6969, () => {
-  console.log("App is running at the port: " + (process.env.PORT || 6969));
+  console.log(`🚀 App is running at the port: ${process.env.PORT || 6969} 🚀`);
   // testTransactions();
 });

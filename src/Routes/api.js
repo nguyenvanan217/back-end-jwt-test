@@ -47,6 +47,7 @@ const initAPIRoutes = (app) => {
   router.get("/roles/read", roleController.readFunc);            // Lấy danh sách vai trò
   router.get("/roles/read-group-with-role/:id", roleController.readGroupWithRole); // Lấy danh sách nhóm người dùng và vai trò
 
+  router.put("/roles/update-role-for-group/:id", roleController.updateRoleForGroup); // Cập nhật vai trò cho nhóm người dùng
   // API get Account xử lý khi load lại trang ở front end giúp không mất thông tin của context phía front end
   router.get("/account", userController.getAccount);
   return app.use("/api/v1", router);
