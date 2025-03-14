@@ -5,6 +5,7 @@ let bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(10);
 const hashUserPassword = (userPassword) => {
   const hasPassword = bcrypt.hashSync(userPassword, salt);
+  console.log("hasPassword: ", hasPassword);
   return hasPassword;
 };
 const checkEmailExist = async (userEmail) => {
@@ -28,6 +29,7 @@ const registerNewUser = async (rawData) => {
       };
     }
     let hasPassword = hashUserPassword(rawData.password);
+    console.log("hasPassword: ", hasPassword);
     await db.User.create({
       email: rawData.email,
       username: rawData.username,

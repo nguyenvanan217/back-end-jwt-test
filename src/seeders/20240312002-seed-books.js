@@ -15,7 +15,7 @@ module.exports = {
         author: 'Stephen Hawking', 
         genreId: genres.find(g => g.name === 'Khoa học').id, 
         quantity: 5, 
-        cover_image: 'cover1.jpg', 
+        cover_image: 'https://th.bing.com/th/id/OIP.FJOb8-U87fitBlYtFqKf9wHaK8?w=128&h=189&c=7&r=0&o=5&dpr=1.5&pid=1.7', 
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
@@ -24,7 +24,7 @@ module.exports = {
         author: 'Paulo Coelho', 
         genreId: genres.find(g => g.name === 'Tiểu thuyết').id, 
         quantity: 10, 
-        cover_image: 'cover2.jpg', 
+        cover_image: 'https://th.bing.com/th/id/OIP._yzetDs3gher9vBV-Ax_iAHaL0?w=117&h=187&c=7&r=0&o=5&dpr=1.5&pid=1.7', 
         createdAt: new Date(), 
         updatedAt: new Date() 
       },
@@ -33,7 +33,7 @@ module.exports = {
         author: 'Trần Quốc Vượng', 
         genreId: genres.find(g => g.name === 'Lịch sử').id, 
         quantity: 7, 
-        cover_image: 'cover3.jpg', 
+        cover_image: 'https://th.bing.com/th/id/OIP._g9GwtOSkaHflHYNY9YGQwHaLF?w=151&h=220&c=7&r=0&o=5&dpr=1.5&pid=1.7', 
         createdAt: new Date(), 
         updatedAt: new Date() 
       },

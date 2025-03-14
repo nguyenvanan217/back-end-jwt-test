@@ -16,19 +16,19 @@ module.exports = {
       { 
         id: 1,
         email: 'admin@gmail.com',
-        username: 'admin',
-        password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', // password: 123456
+        username: 'Admin',
+        password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', // password: 1212
         groupId: adminGroup.id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
-      { id: 2, email: '22T1020535@husc.edu.vn', username: 'Nguyễn Văn An', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 3, email: '21T1020230@husc.edu.vn', username: 'Cao Văn Tuấn Anh', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 4, email: '22T1020540@husc.edu.vn', username: 'Trần Đặng Quốc Anh', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 5, email: '22T1020546@husc.edu.vn', username: 'Nguyễn Tâm Thái Bảo', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 6, email: '22T1020549@husc.edu.vn', username: 'Nguyễn Anh Sao Biển', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 7, email: '22T1020557@husc.edu.vn', username: 'Hắc Tấn Có', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
-      { id: 8, email: '22T1020089@husc.edu.vn', username: 'Hoàng Nhật Duy', password: '$2a$10$K8ZpdrjwzUWSTmtyM.SAHewu7Zxpq3kUXnv/DPVR8M/P4m/q9/4dy', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 2, email: '22T1020535@husc.edu.vn', username: 'Nguyễn Văn An', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 3, email: '21T1020230@husc.edu.vn', username: 'Cao Văn Tuấn Anh', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 4, email: '22T1020540@husc.edu.vn', username: 'Trần Đặng Quốc Anh', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 5, email: '22T1020546@husc.edu.vn', username: 'Nguyễn Tâm Thái Bảo', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 6, email: '22T1020549@husc.edu.vn', username: 'Nguyễn Anh Sao Biển', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 7, email: '22T1020557@husc.edu.vn', username: 'Hắc Tấn Có', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
+      { id: 8, email: '22T1020089@husc.edu.vn', username: 'Hoàng Nhật Duy', password: '$2a$10$XCI1zvZRP0p9QRcQvVaPruUYQ.KJlEYFjpAcKc63wqBikxXIhf48a', groupId: studentGroup.id, createdAt: new Date(), updatedAt: new Date() },
     ]);
   },
 

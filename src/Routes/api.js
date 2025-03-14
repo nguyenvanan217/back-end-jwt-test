@@ -4,6 +4,7 @@ import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
 import roleController from "../Controller/roleController";
+import messageController from '../controller/messageController';
 import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
 let router = express.Router();
 const initAPIRoutes = (app) => {
@@ -20,7 +21,7 @@ const initAPIRoutes = (app) => {
   router.delete("/users/delete", userController.deleteUser);       // Xóa người dùng
   router.get("/users/get-all-user-infor", userController.getAllUsersAndInfor);  // Lấy thông tin chi tiết tất cả người dùng
   router.put("/users/update", userController.updateUser);          // Cập nhật thông tin người dùng
-  router.get("/users/read/:id", userController.getUserDetailsById);// Lấy thông tin chi tiết một người dùng
+  router.get("/users/get-detail/:id", userController.getUserDetailsById);// Lấy thông tin chi tiết một người dùng
   router.get("/status/read/:id", userController.getStatusById);    // Lấy trạng thái người dùng
 
   // Transaction routes
@@ -50,6 +51,11 @@ const initAPIRoutes = (app) => {
   router.put("/roles/update-role-for-group/:id", roleController.updateRoleForGroup); // Cập nhật vai trò cho nhóm người dùng
   // API get Account xử lý khi load lại trang ở front end giúp không mất thông tin của context phía front end
   router.get("/account", userController.getAccount);
+
+
+  // Message routes
+  router.get('/getChatHistory/:userId', messageController.getChatHistory);  // Lấy lịch sử chat
+   router.post('/sendMessage', messageController.sendMessage);
   return app.use("/api/v1", router);
 };
 
