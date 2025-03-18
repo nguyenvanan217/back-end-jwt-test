@@ -1,5 +1,5 @@
 import messageService from "../services/messageService";
-
+const moment = require('moment-timezone');
 const getChatHistory = async (req, res) => {
     try {
         let { userId } = req.params;
@@ -28,14 +28,18 @@ const getChatHistory = async (req, res) => {
         });
     }
 };
+
 const sendMessage = async (req, res) => {
     try {
-        const { sender_id, receiver_id, content, created_at } = req.body;
-        console.log(">>>>>>>>>>>>>.check senderId", sender_id);
-        console.log(">>>>>>>>>>>>>.check receiverId", receiver_id);
-        console.log(">>>>>>>>>>>>>.check content", content);
-        console.log(">>>>>>>>>>>>>.check createdAt", created_at);
-        const data = await messageService.sendMessage(sender_id, receiver_id, content, created_at);
+        let { sender_id, receiver_id, content, created_at } = req.body;
+        console.log("Check received created_at:", created_at);
+
+        // Giữ nguyên giờ VN, không chuyển về UTC
+        const formattedCreatedAt = moment(created_at, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+        console.log("Formatted created_at before saving:", formattedCreatedAt);
+
+        const data = await messageService.sendMessage(sender_id, receiver_id, content, formattedCreatedAt);
+        console.log("Check data:", data);
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -51,7 +55,27 @@ const sendMessage = async (req, res) => {
     }
 };
 
+
+
+const getAllChat = async (req, res) => {
+    try {
+        const data = await messageService.getAllChat();
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT,
+        });
+    } catch (error) {
+        console.log("Error in getAllChat:", error);
+        return res.status(500).json({
+            EM: "Server error",
+            EC: "-1",
+            DT: [],
+        });
+    }
+};
 export default {
     getChatHistory,
-    sendMessage
+    sendMessage,
+    getAllChat
 };

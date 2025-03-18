@@ -1,5 +1,5 @@
 "use strict";
-
+const moment = require('moment-timezone');
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("messages", {
@@ -38,10 +38,12 @@ module.exports = {
       createdAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
-      },
+        allowNull: false,
+      },      
       updatedAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
       },
     });
   },

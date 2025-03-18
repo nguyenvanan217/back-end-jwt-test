@@ -35,6 +35,7 @@ module.exports = {
       { id: 25, url: '/roles/update-role-for-group', description: 'Cập nhật vai trò cho nhóm người dùng' },
       { id: 26, url: '/getChatHistory', description: 'Lấy lịch sử chat' },
       { id: 27, url: '/sendMessage', description: 'Gửi tin nhắn' },
+      { id: 28, url: '/getAllChat', description: 'Lấy tất cả tin nhắn' },
     ].map(role => ({
       ...role,
       createdAt: new Date(),

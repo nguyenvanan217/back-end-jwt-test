@@ -18,6 +18,7 @@
     "ejs": "^3.1.5",
     "express": "^4.17.2",
     "jsonwebtoken": "8.5.1",
+    "moment-timezone": "^0.5.47",
     "mysql2": "^2.2.5",
     "sequelize": "^6.6.2",
     "socket.io": "^4.8.1"

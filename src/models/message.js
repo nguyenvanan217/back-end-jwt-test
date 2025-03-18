@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const moment = require('moment-timezone');
+const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Message extends Model {
     static associate(models) {
@@ -31,16 +33,28 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("Sent", "Delivered", "Seen"),
         defaultValue: "Sent",
       },
-      createdAt: { 
+      createdAt: {
         type: DataTypes.DATE,
+        allowNull: false,
         defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
-      },
+        get() {
+            return moment(this.getDataValue("createdAt")).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
+        },
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        get() {
+            return moment.utc(this.getDataValue("updatedAt")).tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
+        },
+    },
     },
     {
       sequelize,
       modelName: "Message",
       tableName: "messages",
-      timestamps: true, 
+      timestamps: false, 
     }
   );
   return Message;

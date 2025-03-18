@@ -56,6 +56,8 @@ const initAPIRoutes = (app) => {
   // Message routes
   router.get('/getChatHistory/:userId', messageController.getChatHistory);  // Lấy lịch sử chat
    router.post('/sendMessage', messageController.sendMessage);
+   // get all chat của admin
+  router.get('/getAllChat', messageController.getAllChat);
   return app.use("/api/v1", router);
 };
 

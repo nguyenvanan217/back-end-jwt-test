@@ -5,6 +5,7 @@ const sequelize = new Sequelize('testJWT', 'root', null, {
   host: 'localhost',
   dialect: 'mysql',
   logging: false,
+  timezone: '+07:00',
 });
 const Connection =async ()=>{
     try {
@@ -14,4 +15,4 @@ const Connection =async ()=>{
         console.error('Unable to connect to the database:', error);
       }
 }
-export default Connection
+export default Connection   
