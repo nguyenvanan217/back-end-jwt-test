@@ -36,6 +36,7 @@ module.exports = {
       { id: 26, url: '/getChatHistory', description: 'Lấy lịch sử chat' },
       { id: 27, url: '/sendMessage', description: 'Gửi tin nhắn' },
       { id: 28, url: '/getAllChat', description: 'Lấy tất cả tin nhắn' },
+      { id: 29, url: '/get-admin-chat-id', description: 'Lấy ID chat của admin' },
     ].map(role => ({
       ...role,
       createdAt: new Date(),

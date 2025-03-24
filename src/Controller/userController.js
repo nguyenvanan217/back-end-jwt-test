@@ -258,6 +258,23 @@ const getAccount = async (req, res) => {
     },
   });
 };
+const getAdminChatId = async (req, res) => {
+  try {
+    const data = await userService.getAdminChatId();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log("Error in getAdminChatId:", error);
+    return res.status(500).json({
+      EM: "Server error",
+      EC: "-1",
+      DT: [],
+    });
+  }
+};
 module.exports = {
   testApi,
   handleRegister,
@@ -269,5 +286,6 @@ module.exports = {
   getStatusById,
   getUserDetailsById,
   getAllUsersAndInfor,
-  getAccount
+  getAccount,
+  getAdminChatId
 };

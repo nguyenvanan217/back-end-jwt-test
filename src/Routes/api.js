@@ -23,6 +23,7 @@ const initAPIRoutes = (app) => {
   router.put("/users/update", userController.updateUser);          // Cập nhật thông tin người dùng
   router.get("/users/get-detail/:id", userController.getUserDetailsById);// Lấy thông tin chi tiết một người dùng
   router.get("/status/read/:id", userController.getStatusById);    // Lấy trạng thái người dùng
+  router.get("/get-admin-chat-id", userController.getAdminChatId); // Lấy ID chat của admin
 
   // Transaction routes
   router.post("/transactions/create", transactionController.createTransactionController);    // Tạo giao dịch mới

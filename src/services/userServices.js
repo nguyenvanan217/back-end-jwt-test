@@ -445,6 +445,28 @@ const getAllUsersAndInforWithPaginate = async (page, limit) => {
     };
   }
 };
+const getAdminChatId = async () => {
+  try {
+    const adminChat = await db.User.findAll({
+      where: {
+        groupId: 1
+      }
+    });
+    console.log(adminChat);
+    return {
+      EM: "Lấy ID chat của admin thành công",
+      EC: 0,
+      DT: adminChat
+    };
+  } catch (error) {
+    console.log("Error in getAdminChatId:", error);
+    return {
+      EM: "Lỗi dịch vụ!",
+      EC: -1,
+      DT: null
+    };
+  }
+}
 module.exports = {
   getUser,
   deleteUser,
@@ -455,4 +477,5 @@ module.exports = {
   getUserPagination,
   getAllUsersAndInforWithSearch,
   getAllUsersAndInforWithPaginate,
+  getAdminChatId
 };
