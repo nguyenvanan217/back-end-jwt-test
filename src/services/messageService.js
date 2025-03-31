@@ -86,7 +86,7 @@ const sendMessage = async (sender_id, receiver_id, content, created_at, image_ur
         DT: [],
       };
     }
-  };
+};
 
 const getAllChat = async () => {
     try {
