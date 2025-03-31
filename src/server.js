@@ -6,6 +6,7 @@ import Connection from "./configs/connectDB";
 import initAPIRoutes from "./Routes/api";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
@@ -19,7 +20,7 @@ app.use(
     credentials: true,
   })
 );
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const io = new Server(server, {
   cors: {
     origin: process.env.REACT_URL,

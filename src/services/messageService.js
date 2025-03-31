@@ -58,36 +58,35 @@ const getChatHistory = async (userId) => {
         };
     }
 };
-const sendMessage = async (sender_id, receiver_id, content) => {
+const sendMessage = async (sender_id, receiver_id, content, created_at, image_url = null) => {
     try {
-        const created_at = moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD HH:mm:ss");
-        console.log("Check before saving (should be GMT+7):", created_at);
-
-        const message = await db.Message.create({
-            sender_id,
-            receiver_id,
-            content,
-            createdAt: created_at,
-            updatedAt: created_at,
-        });
-
-        console.log("Saved message:", message.get({ plain: true }));
-
-        return {
-            EM: "Message sent successfully",
-            EC: "0",
-            DT: message.get({ plain: true }),
-        };
+      console.log("Check before saving (should be GMT+7):", created_at);
+  
+      const message = await db.Message.create({
+        sender_id,
+        receiver_id,
+        content,
+        image_url,
+        createdAt: created_at,
+        updatedAt: created_at,
+      });
+  
+      console.log("Saved message:", message.get({ plain: true }));
+  
+      return {
+        EM: "Message sent successfully",
+        EC: "0",
+        DT: message.get({ plain: true }),
+      };
     } catch (error) {
-        console.log("Error in sendMessage:", error);
-        return {
-            EM: "Message sending failed",
-            EC: "-1",
-            DT: [],
-        };
+      console.log("Error in sendMessage:", error);
+      return {
+        EM: "Message sending failed",
+        EC: "-1",
+        DT: [],
+      };
     }
-};
-
+  };
 
 const getAllChat = async () => {
     try {
@@ -98,7 +97,7 @@ const getAllChat = async () => {
                     as: "sender",
                     attributes: ["id", "username", "email"],
                 },
-                {
+                {   
                     model: db.User,
                     as: "receiver",
                     attributes: ["id", "username", "email"],

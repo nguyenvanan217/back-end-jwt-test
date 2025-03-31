@@ -4,8 +4,9 @@ import groupController from "../Controller/groupController";
 import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
 import roleController from "../Controller/roleController";
-import messageController from '../controller/messageController';
+import messageController from '../Controller/messageController';
 import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
+import { upload } from "../middleware/uploadImage";
 let router = express.Router();
 const initAPIRoutes = (app) => {
   // Middleware kiểm tra JWT và phân quyền cho tất cả routes
@@ -55,8 +56,8 @@ const initAPIRoutes = (app) => {
 
 
   // Message routes
-  router.get('/getChatHistory/:userId', messageController.getChatHistory);  // Lấy lịch sử chat
-   router.post('/sendMessage', messageController.sendMessage);
+  router.get('/getChatHistory/:userId', messageController.getChatHistory);  // Lấy lịch sử chat của người dùng
+  router.post("/sendMessage", upload.array("images", 5), messageController.sendMessage);
    // get all chat của admin
   router.get('/getAllChat', messageController.getAllChat);
   return app.use("/api/v1", router);
