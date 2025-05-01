@@ -60,8 +60,6 @@ const getChatHistory = async (userId) => {
 };
 const sendMessage = async (sender_id, receiver_id, content, created_at, image_url = null) => {
     try {
-      console.log("Check before saving (should be GMT+7):", created_at);
-  
       const message = await db.Message.create({
         sender_id,
         receiver_id,
@@ -86,7 +84,7 @@ const sendMessage = async (sender_id, receiver_id, content, created_at, image_ur
         DT: [],
       };
     }
-};
+};  
 
 const getAllChat = async () => {
     try {

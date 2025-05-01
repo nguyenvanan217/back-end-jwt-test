@@ -7,60 +7,44 @@ import initAPIRoutes from "./Routes/api";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import setupSocket from "./setup/socket";
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 
+// Khởi tạo app và server
 let app = express();
-const server = http.createServer(app); // Dùng server này thay vì app.listen
+const server = http.createServer(app);
 
-app.use(
-  cors({
-    origin: process.env.REACT_URL,
-    credentials: true,
-  })
-);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Khởi tạo Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.REACT_URL,
-    methods: ["GET", "POST"],
+      origin: process.env.REACT_URL,
+      methods: ["GET", "POST"],
+      credentials: true,
   },
 });
-
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  // Khi user tham gia, cho vào room dựa theo userId
-  socket.on("joinRoom", (userId) => {
-    socket.join(userId); // Tham gia room với userId
-    console.log(`User ${userId} joined room`);
-  });
-
-  socket.on("sendMessage", (data) => {
-    io.to(data.receiverId).emit("receiveMessage", data); // Gửi tin nhắn đến room của user nhận
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
-// Cấu hình view engine
-configViewEngine(app);
+// console.log('Socket.IO initialized:', io);
 
 // Middleware
+app.use(cors({
+  origin: process.env.REACT_URL,
+  credentials: true,
+}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+configViewEngine(app);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Kiểm tra kết nối DB
+// Kết nối DB và khởi tạo routes
 Connection();
-
 initWebRoutes(app);
-initAPIRoutes(app);
+initAPIRoutes(app, io);
+// Cấu hình socket
 
-// Chạy server thay vì app.listen
+setupSocket(io);
+// Khởi động server
 server.listen(process.env.PORT || 6969, () => {
   console.log(`🚀 App is running at the port: ${process.env.PORT || 6969} 🚀`);
 });
