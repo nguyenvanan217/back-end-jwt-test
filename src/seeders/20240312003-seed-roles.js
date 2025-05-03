@@ -24,7 +24,7 @@ module.exports = {
       { id: 14, url: '/transactions/create', description: 'Tạo giao dịch' },
       { id: 15, url: '/transactions/resolve-violation', description: 'Xử lý vi phạm' },
       { id: 16, url: '/transactions/update-date-and-status', description: 'Cập nhật ngày và trạng thái' },
-      { id: 17, url: '/transactions/auto-update-status', description: 'Tự động cập nhật trạng thái' },
+      { id: 17, url: '/transactions/autoupdatestatus', description: 'Tự động cập nhật trạng thái' },
       { id: 18, url: '/transactions/delete', description: 'Xóa giao dịch' },
       { id: 19, url: '/genres/read', description: 'Xem thể loại' },
       { id: 20, url: '/genres/create', description: 'Thêm thể loại' },
