@@ -8,6 +8,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 import setupSocket from "./setup/socket";
+// const cron = require('node-cron');
 require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
@@ -44,6 +45,12 @@ initAPIRoutes(app, io);
 // Cấu hình socket
 
 setupSocket(io);
+
+// Chạy mỗi ngày lúc 8h sáng
+// cron.schedule('0 8 * * *', async () => {
+//   await checkAndSendEmailNotifications();
+// });
+
 // Khởi động server
 server.listen(process.env.PORT || 6969, () => {
   console.log(`🚀 App is running at the port: ${process.env.PORT || 6969} 🚀`);
