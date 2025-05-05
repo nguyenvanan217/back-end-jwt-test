@@ -8,8 +8,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 import setupSocket from "./setup/socket";
-// const cron = require('node-cron');
+const cron = require('node-cron');
 require("dotenv").config();
+import transactionService from './services/transactionService';
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -46,10 +47,17 @@ initAPIRoutes(app, io);
 
 setupSocket(io);
 
-// Chạy mỗi ngày lúc 8h sáng
-// cron.schedule('0 8 * * *', async () => {
-//   await checkAndSendEmailNotifications();
-// });
+
+cron.schedule('24 18 * * *', async () => {
+  try {
+    console.log('Running scheduled task at 17:05...');
+    const currentDate = new Date();
+    console.log('Current time:', currentDate.toLocaleString());
+    await transactionService.cronSendEmail();
+  } catch (error) {
+    console.error('Scheduled task error:', error);
+  }
+});
 
 // Khởi động server
 server.listen(process.env.PORT || 6969, () => {

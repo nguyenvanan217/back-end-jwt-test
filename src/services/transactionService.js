@@ -1,47 +1,8 @@
 import db from "../models/index";
-const nodemailer = require("nodemailer");
-const transporter = require("./emailService").transporter;
-
-const sendEmailNotification = async (transaction, daysUntilReturn) => {
-  let emailSubject = '';
-  let emailContent = '';
-
-  if (daysUntilReturn === 3) {
-    emailSubject = "Nhắc nhở: Sắp đến hạn trả sách (còn 3 ngày)";
-  } else if (daysUntilReturn === 2) {
-    emailSubject = "Nhắc nhở: Sắp đến hạn trả sách (còn 2 ngày)";
-  } else if (daysUntilReturn === 1) {
-    emailSubject = "Cảnh báo: Ngày mai là hạn cuối trả sách";
-  } else if (daysUntilReturn <= 0) {
-    emailSubject = `Cảnh báo: Bạn đã quá hạn mượn sách ${Math.abs(daysUntilReturn)} ngày`;
-  }
-
-  if (emailSubject) {
-    emailContent = `
-      Kính gửi ${transaction.User.username},
-      
-      ${emailSubject} cho cuốn sách "${transaction.Book.title}".
-      Ngày hẹn trả: ${transaction.return_date}
-      
-      Vui lòng trả sách đúng hạn để tránh và giảm thiểu các hình thức xử phạt.
-      
-      Trân trọng,
-      Thư viện Đại Học Khoa Học Huế
-    `;
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: transaction.User.email,
-      subject: emailSubject,
-      text: emailContent
-    });
-  }
-};
-
+import emailService from './emailService'; 
 const autoUpdateStatusInDB = async () => {
   try {
-    // Thay vì dùng ngày hiện tại, ta hard-code ngày test
-    const currentDate = new Date('2025-05-07');
+    const currentDate = new Date(); 
     const transactions = await db.Transactions.findAll({
       where: {
         status: {
@@ -60,92 +21,15 @@ const autoUpdateStatusInDB = async () => {
       ]
     });
 
-    const currentDateString = currentDate.toISOString().split("T")[0];
-
-    const overdueTransactions = [];
-    const waitingTransactions = [];
-    let hasStatusChanges = false;
-
-    console.log('Tổng số giao dịch:', transactions.length);
-    
-    transactions.forEach((trans) => {
-      console.log('Transaction:', {
-        id: trans.id,
-        returnDate: trans.return_date,
-        currentStatus: trans.status,
-        shouldBeOverdue: trans.return_date < currentDateString
-      });
-
-      const shouldBeOverdue = trans.return_date < currentDateString;
-
-      console.log('Date comparison:', {
-        currentDate: currentDateString,
-        returnDate: trans.return_date,
-        isOverdue: shouldBeOverdue,
-        currentStatus: trans.status
-      });
-
-      if (shouldBeOverdue && trans.status !== "Quá hạn") {
-        overdueTransactions.push(trans.id);
-        hasStatusChanges = true;
-      } else if (!shouldBeOverdue && trans.status !== "Chờ trả") {
-        waitingTransactions.push(trans.id);
-        hasStatusChanges = true;
-      }
-    });
-
-    if (hasStatusChanges) {
-      if (overdueTransactions.length > 0) {
-        await db.Transactions.update(
-          { status: "Quá hạn" },
-          {
-            where: {
-              id: overdueTransactions,
-            },
-          }
-        );
-      }
-
-      if (waitingTransactions.length > 0) {
-        await db.Transactions.update(
-          { status: "Chờ trả" },
-          {
-            where: {
-              id: waitingTransactions,
-            },
-          }
-        );
-      }
-
-      let message = "";
-      if (overdueTransactions.length > 0) {
-        message = `Hệ thống vừa cập nhật ${overdueTransactions.length} giao dịch của sinh viên thành Quá hạn`;
-      } else if (waitingTransactions.length > 0) {
-        message = `Hệ thống vừa cập nhật ${waitingTransactions.length} giao dịch của sinh viên thành Chờ trả`;
-      }
-    }
-
-    // Tách phần gửi email ra khỏi điều kiện hasStatusChanges
-    // Gửi email cho tất cả các giao dịch phù hợp điều kiện
-    for (const transaction of transactions) {
-      const returnDate = new Date(transaction.return_date);
-      const daysUntilReturn = Math.ceil((returnDate - currentDate) / (1000 * 60 * 60 * 24));
-      
-      // Gửi email khi:
-      // - Còn 3 ngày hoặc ít hơn đến hạn
-      // - Hoặc đã quá hạn
-      if (daysUntilReturn <= 3 || daysUntilReturn <= 0) {
-        console.log('Sending email for transaction:', transaction.id, 'Days until return:', daysUntilReturn);
-        await sendEmailNotification(transaction, daysUntilReturn);
-      }
-    }
+    // Chỉ cập nhật status, không gửi email
+    const { overdueTransactions, waitingTransactions, hasStatusChanges } = 
+      await updateTransactionStatuses(transactions, currentDate);
 
     return {
-      EM: hasStatusChanges ? "Cập nhật trạng thái và gửi email thành công" : "Gửi email nhắc nhở thành công",
+      EM: hasStatusChanges ? "Cập nhật trạng thái thành công" : "Không có thay đổi",
       EC: 0,
       DT: {
         updatedTransactions: transactions,
-        emailsSent: true,
         overdueTransactions,
         waitingTransactions,
         hasChanges: hasStatusChanges
@@ -159,6 +43,53 @@ const autoUpdateStatusInDB = async () => {
       DT: error.message,
     };
   }
+};
+
+const updateStatuses = async (overdueTransactions, waitingTransactions) => {
+  try {
+    // Cập nhật các giao dịch quá hạn
+    if (overdueTransactions.length > 0) {
+      await db.Transactions.update(
+        { status: "Quá hạn" },
+        { where: { id: overdueTransactions } }
+      );
+    }
+
+    // Cập nhật các giao dịch chờ trả
+    if (waitingTransactions.length > 0) {
+      await db.Transactions.update(
+        { status: "Chờ trả" },
+        { where: { id: waitingTransactions } }
+      );
+    }
+  } catch (error) {
+    console.error("Error in updateStatuses:", error);
+    throw error;
+  }
+};
+
+const updateTransactionStatuses = async (transactions, currentDate) => {
+  const currentDateString = currentDate.toISOString().split("T")[0];
+  const overdueTransactions = [];
+  const waitingTransactions = [];
+  let hasStatusChanges = false;
+
+  transactions.forEach(trans => {
+    const shouldBeOverdue = trans.return_date < currentDateString;
+    if (shouldBeOverdue && trans.status !== "Quá hạn") {
+      overdueTransactions.push(trans.id);
+      hasStatusChanges = true;
+    } else if (!shouldBeOverdue && trans.status !== "Chờ trả") {
+      waitingTransactions.push(trans.id);
+      hasStatusChanges = true;
+    }
+  });
+
+  if (hasStatusChanges) {
+    await updateStatuses(overdueTransactions, waitingTransactions);
+  }
+
+  return { overdueTransactions, waitingTransactions, hasStatusChanges };
 };
 
 const createTransactionService = async (data) => {
@@ -223,10 +154,9 @@ const createTransactionService = async (data) => {
   }
 };
 
-const checkAndSendEmailNotifications = async () => {
+const cronSendEmail = async () => {
   try {
-    const currentDate = new Date();
-    
+    const currentDate = new Date(); // Sử dụng ngày hiện tại
     const transactions = await db.Transactions.findAll({
       where: {
         status: {
@@ -245,56 +175,20 @@ const checkAndSendEmailNotifications = async () => {
       ]
     });
 
-    for (const transaction of transactions) {
-      const returnDate = new Date(transaction.return_date);
-      const daysUntilReturn = Math.ceil((returnDate - currentDate) / (1000 * 60 * 60 * 24));
-      
-      let emailSubject = '';
-      let emailContent = '';
-
-      if (daysUntilReturn === 3) {
-        emailSubject = "Nhắc nhở: Sắp đến hạn trả sách (còn 3 ngày)";
-      } else if (daysUntilReturn === 2) {
-        emailSubject = "Nhắc nhở: Sắp đến hạn trả sách (còn 2 ngày)";
-      } else if (daysUntilReturn === 1) {
-        emailSubject = "Cảnh báo: Ngày mai là hạn cuối trả sách";
-      } else if (daysUntilReturn <= 0) {
-        emailSubject = `Cảnh báo: Bạn đã quá hạn mượn sách ${Math.abs(daysUntilReturn)} ngày`;
-      }
-
-      if (emailSubject) {
-        emailContent = `
-          Kính gửi ${transaction.User.username},
-          
-          ${emailSubject} cho cuốn sách "${transaction.Book.title}".
-          Ngày hẹn trả: ${transaction.return_date}
-          
-          Vui lòng trả sách đúng hạn để tránh và giảm thiểu các hình thức xử phạt.
-          
-          Trân trọng,
-          Thư viện Đại Học Khoa Học Huế
-        `;
-
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: transaction.User.email,
-          subject: emailSubject,
-          text: emailContent
-        });
-      }
-    }
+    // Chỉ gửi email
+    const emailsSent = await emailService.checkAndSendEmails(transactions, currentDate);
 
     return {
-      EM: "Đã gửi email nhắc nhở thành công",
+      EM: emailsSent ? "Gửi email thành công" : "Không có email nào được gửi",
       EC: 0,
-      DT: []
+      DT: { emailsSent }
     };
   } catch (error) {
-    console.error("Lỗi khi gửi email:", error);
+    console.log("Error:", error);
     return {
-      EM: "Lỗi trong quá trình gửi email",
-      EC: 1,
-      DT: []
+      EM: "Internal server error", 
+      EC: -1,
+      DT: error.message
     };
   }
 };
@@ -302,5 +196,7 @@ const checkAndSendEmailNotifications = async () => {
 module.exports = {
   autoUpdateStatusInDB,
   createTransactionService,
-  checkAndSendEmailNotifications,
+  updateTransactionStatuses,
+  updateStatuses,
+  cronSendEmail
 };

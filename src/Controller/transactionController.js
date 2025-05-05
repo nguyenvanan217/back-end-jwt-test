@@ -1,5 +1,6 @@
 import db from "../models";
 import transactionService from "../services/transactionService";
+import emailService from "../services/emailService";
 
 const deleteTransaction = async (req, res) => {
   try {
@@ -131,7 +132,11 @@ const markViolationAsResolved = async (req, res) => {
         {
           model: db.Book,
         },
-      ],
+        {
+          model: db.User,
+          attributes: ['email', 'username']
+        }
+      ]
     });
 
     if (!transaction) {
@@ -141,6 +146,23 @@ const markViolationAsResolved = async (req, res) => {
         DT: [],
       });
     }
+
+    // Chuẩn bị dữ liệu cho email template
+    const emailData = {
+      username: transaction.User.username,
+      bookTitle: transaction.Book.title,
+      status: transaction.status,
+      returnDate: new Date().toLocaleDateString('vi-VN')
+    };
+
+    // Lấy template và gửi email
+    const { subject, content } = emailService.returnBookTemplate(emailData);
+    const emailSent = await emailService.transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: transaction.User.email,
+      subject,
+      text: content
+    });
 
     // Cập nhật status transaction
     await transaction.update({
@@ -153,7 +175,9 @@ const markViolationAsResolved = async (req, res) => {
     });
 
     return res.status(200).json({
-      EM: "Cập nhật trạng thái thành công",
+      EM: emailSent 
+        ? "Cập nhật trạng thái và gửi email thành công" 
+        : "Cập nhật trạng thái thành công, nhưng không gửi được email",
       EC: 0,
       DT: [],
     });
