@@ -156,12 +156,12 @@ const markViolationAsResolved = async (req, res) => {
     };
 
     // Lấy template và gửi email
-    const { subject, content } = emailService.returnBookTemplate(emailData);
+    const { subject, html } = emailService.returnBookTemplate(emailData);
     const emailSent = await emailService.transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: transaction.User.email,
       subject,
-      text: content
+      html 
     });
 
     // Cập nhật status transaction
