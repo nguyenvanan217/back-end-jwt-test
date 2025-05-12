@@ -6,7 +6,8 @@ import transactionController from "../Controller/transactionController";
 import roleController from "../Controller/roleController";
 import messageController from '../Controller/messageController';
 import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
-import { upload } from "../middleware/uploadImage";
+import { uploadExcel } from "../middleware/uploadFile";
+import {upload } from "../middleware/uploadImage"
 let router = express.Router();
 const initAPIRoutes = (app,io) => {
   // Middleware kiểm tra JWT và phân quyền cho tất cả routes
@@ -38,6 +39,10 @@ const initAPIRoutes = (app,io) => {
   router.post("/books/create", bookController.createBook);        // Thêm sách mới
   router.delete("/books/delete/:id", bookController.deleteBook);  // Xóa sách
   router.put("/books/update/:id", bookController.updateBook);     // Cập nhật thông tin sách
+  router.post("/books/import-excel", 
+    uploadExcel,  // Sử dụng middleware đã wrap
+    bookController.importBooksFromExcel
+  ); // Nhập sách từ file Excel
 
   // Genre management routes
   router.get("/genres/read", bookController.readGenre);           // Lấy danh sách thể loại
@@ -60,7 +65,10 @@ const initAPIRoutes = (app,io) => {
   router.post("/sendMessage", upload.array("images", 5), (req, res) => messageController.sendMessage(req, res, io));
    // get all chat của admin
   router.get('/getAllChat', messageController.getAllChat);
-  return app.use("/api/v1", router);
+
+  app.use("/api/v1", router);
+
+  return app;
 };
 
 export default initAPIRoutes;

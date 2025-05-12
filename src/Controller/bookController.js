@@ -139,6 +139,31 @@ const deleteGenre = async (req, res) => {
     });
   }
 };
+const importBooksFromExcel = async (req, res) => {
+  try {
+    // Kiểm tra file tồn tại
+    if (!req.file) {
+      return res.status(400).json({
+        EM: "Không tìm thấy file",
+        EC: 1,
+        DT: []
+      });
+    }
+
+    // Gọi service với buffer của file
+    const result = await bookService.importBooksFromExcel(req.file.buffer);
+    return res.status(200).json(result);
+
+  } catch (error) {
+    console.error("Import error:", error);
+    return res.status(500).json({
+      EM: error.message || "Lỗi server",
+      EC: -1,
+      DT: []
+    });
+  }
+};
+
 export default {
   readFunc,
   createBook,
@@ -147,4 +172,5 @@ export default {
   deleteBook,
   addGenres,
   deleteGenre,
+  importBooksFromExcel
 };

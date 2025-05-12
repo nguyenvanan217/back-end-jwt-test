@@ -24,7 +24,8 @@
     "node-cron": "^3.0.3",
     "nodemailer": "6.9.3",
     "sequelize": "^6.6.2",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

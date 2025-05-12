@@ -1,5 +1,7 @@
 import db from "../models";
 import { Op } from "sequelize";
+const xlsx = require('xlsx');
+
 const getAllBookPagination = async (page, limit, searchTerm = "") => {
   try {
     let offset = (page - 1) * limit;
@@ -286,6 +288,178 @@ const deleteGenreById = async (id) => {
     };
   }
 };
+
+const validateBookData = (row, index) => {
+  const errors = [];
+  const requiredFields = {
+    title: 'Tên sách',
+    author: 'Tác giả', 
+    genre_name: 'Thể loại',
+    quantity: 'Số lượng'
+  };
+
+  // Validate dữ liệu
+  for (const [field, fieldName] of Object.entries(requiredFields)) {
+    if (!row[field]) {
+      errors.push(`Thiếu thông tin ${fieldName}`);
+    }
+  }
+
+  // Validate số lượng
+  if (row.quantity) {
+    if (isNaN(row.quantity)) {
+      errors.push('Số lượng phải là số');
+    } else if (row.quantity <= 0) {
+      errors.push('Số lượng phải lớn hơn 0');
+    }
+  }
+
+  return {
+    rowIndex: index + 1,
+    bookTitle: row.title || 'Không có tên',
+    hasError: errors.length > 0,
+    errors: errors,
+    rawData: row
+  };
+};
+
+const importBooksFromExcel = async (fileBuffer) => {
+  try {
+    const workbook = xlsx.read(fileBuffer);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = xlsx.utils.sheet_to_json(worksheet);
+
+    // Validate tất cả dữ liệu
+    const validationResults = data.map((row, index) => validateBookData(row, index));
+    const hasErrors = validationResults.some(result => result.hasError);
+
+    // Nếu có lỗi, trả về chi tiết lỗi
+    if (hasErrors) {
+      return {
+        EM: "Dữ liệu Excel không hợp lệ",
+        EC: 1,
+        DT: {
+          totalRows: data.length,
+          validRows: validationResults.filter(r => !r.hasError).length,
+          errorRows: validationResults.filter(r => r.hasError).length,
+          details: validationResults.map(result => ({
+            row: result.rowIndex,
+            title: result.bookTitle,
+            isValid: !result.hasError,
+            errors: result.errors
+          }))
+        }
+      };
+    }
+
+    // Nếu dữ liệu hợp lệ, tiến hành import
+    const importResults = [];
+    const successBooks = [];
+    
+    for (const row of data) {
+      try {
+        // Kiểm tra/tạo genre
+        let genre = await db.Genres.findOne({
+          where: { name: row.genre_name }
+        });
+
+        if (!genre) {
+          genre = await db.Genres.create({
+            name: row.genre_name
+          });
+        }
+
+        // Kiểm tra sách tồn tại
+        const existingBook = await db.Book.findOne({
+          where: {
+            title: row.title,
+            author: row.author
+          }
+        });
+
+        if (existingBook) {
+          await existingBook.update({
+            quantity: existingBook.quantity + parseInt(row.quantity)
+          });
+          successBooks.push({
+            ...existingBook.get(),
+            status: 'updated',
+            addedQuantity: parseInt(row.quantity)
+          });
+        } else {
+          const newBook = await db.Book.create({
+            title: row.title,
+            author: row.author,
+            quantity: parseInt(row.quantity),
+            cover_image: row.cover_image || null,
+            genreId: genre.id
+          });
+          successBooks.push({
+            ...newBook.get(),
+            status: 'created'
+          });
+        }
+
+      } catch (err) {
+        importResults.push({
+          title: row.title,
+          success: false,
+          error: err.message
+        });
+      }
+    }
+
+    return {
+      EM: `Import thành công ${successBooks.length}/${data.length} sách`,
+      EC: 0,
+      DT: {
+        totalProcessed: data.length,
+        successCount: successBooks.length,
+        books: successBooks.map(book => ({
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          quantity: book.quantity,
+          status: book.status,
+          addedQuantity: book.addedQuantity
+        }))
+      }
+    };
+
+  } catch (error) {
+    console.error("Error importing books:", error);
+    return {
+      EM: "Lỗi khi import dữ liệu",
+      EC: -1,
+      DT: {
+        error: error.message
+      }
+    };
+  }
+};
+
+const handleImportExcel = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  // Đảm bảo tên field là 'file' khớp với backend
+  formData.append('file', file);
+
+  try {
+    const response = await importBooksFromExcel(formData);
+    setImportResult(response);
+    setIsOpenModalImport(true);
+
+    if (response.EC === 0) {
+      await fetchAllBook();
+    }
+  } catch (error) {
+    console.error('Import error:', error);
+    toast.error('Lỗi khi import file Excel');
+  }
+};
+
 module.exports = {
   createBook,
   getAllGenre,
@@ -294,4 +468,6 @@ module.exports = {
   genresCreate,
   deleteGenreById,
   getAllBookPagination,
+  importBooksFromExcel,
+  handleImportExcel
 };

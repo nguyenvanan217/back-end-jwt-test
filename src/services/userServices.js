@@ -242,6 +242,14 @@ const getUserById = async (id) => {
       where: {
         id: id,
       },
+      attributes: [
+        'id', 
+        'email',
+        'username',
+        'groupId',
+        'createdAt',
+        'updatedAt'
+      ],
       include: [
         {
           model: db.Group,
