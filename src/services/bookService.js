@@ -438,27 +438,6 @@ const importBooksFromExcel = async (fileBuffer) => {
   }
 };
 
-const handleImportExcel = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const formData = new FormData();
-  // Đảm bảo tên field là 'file' khớp với backend
-  formData.append('file', file);
-
-  try {
-    const response = await importBooksFromExcel(formData);
-    setImportResult(response);
-    setIsOpenModalImport(true);
-
-    if (response.EC === 0) {
-      await fetchAllBook();
-    }
-  } catch (error) {
-    console.error('Import error:', error);
-    toast.error('Lỗi khi import file Excel');
-  }
-};
 
 module.exports = {
   createBook,
@@ -469,5 +448,4 @@ module.exports = {
   deleteGenreById,
   getAllBookPagination,
   importBooksFromExcel,
-  handleImportExcel
 };
