@@ -38,6 +38,7 @@ module.exports = {
       { id: 28, url: '/getAllChat', description: 'Lấy tất cả tin nhắn' },
       { id: 29, url: '/get-admin-chat-id', description: 'Lấy ID chat của admin' },
       {id: 30, url: '/books/import-excel', description: 'Import sách từ file Excel'},
+      {id: 31, url: '/chatbot', description: 'Giao tiếp với chatbot'},
     ].map(role => ({
       ...role,
       createdAt: new Date(),

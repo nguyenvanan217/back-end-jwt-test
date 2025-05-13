@@ -5,6 +5,7 @@ import bookController from "../Controller/bookController";
 import transactionController from "../Controller/transactionController";
 import roleController from "../Controller/roleController";
 import messageController from '../Controller/messageController';
+import chatbotController from '../Controller/chatbotController';
 import { checkUserJWT, checkUserPermission } from "../middleware/JWTAction";
 import { uploadExcel } from "../middleware/uploadFile";
 import {upload } from "../middleware/uploadImage"
@@ -65,6 +66,9 @@ const initAPIRoutes = (app,io) => {
   router.post("/sendMessage", upload.array("images", 5), (req, res) => messageController.sendMessage(req, res, io));
    // get all chat của admin
   router.get('/getAllChat', messageController.getAllChat);
+
+  // Chatbot route
+  router.post("/chatbot", chatbotController.handleChatbotMessage);
 
   app.use("/api/v1", router);
 
