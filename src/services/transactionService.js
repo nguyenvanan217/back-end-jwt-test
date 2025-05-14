@@ -193,10 +193,119 @@ const cronSendEmail = async () => {
   }
 };
 
+const extendLoanService = async (transactionId) => {
+  try {
+      // Tìm giao dịch
+      const transaction = await db.Transactions.findOne({
+          where: { 
+              id: transactionId,
+              status: 'Chờ trả'  // Chỉ cho phép gia hạn với sách đang mượn
+          },
+          include: [
+              {
+                  model: db.User,
+                  attributes: ['email', 'username']
+              },
+              {
+                  model: db.Book,
+                  attributes: ['title']
+              }
+          ]
+      });
+
+      if (!transaction) {
+          return {
+              EM: "Không tìm thấy giao dịch hoặc sách không thể gia hạn",
+              EC: 1,
+              DT: []
+          };
+      }
+
+      // Lưu ngày trả cũ trước khi cập nhật
+      const oldReturnDate = new Date(transaction.return_date);
+      
+      // Tính ngày gia hạn mới (thêm 15 ngày từ ngày trả cũ)
+      const newReturnDate = new Date(oldReturnDate);
+      newReturnDate.setDate(oldReturnDate.getDate() + 15);
+
+      // Cập nhật ngày trả mới
+      await transaction.update({
+          return_date: newReturnDate
+      });
+
+      // Gửi email thông báo gia hạn thành công
+      const emailData = {
+          username: transaction.User.username,
+          bookTitle: transaction.Book.title,
+          newReturnDate: newReturnDate.toLocaleDateString('vi-VN'),
+          oldReturnDate: oldReturnDate.toLocaleDateString('vi-VN')
+      };
+
+      // Send email notification
+      await emailService.transporter.sendMail({
+           from: process.env.EMAIL_USER,
+  to: transaction.User.email,
+  subject: "📚 Gia hạn mượn sách thành công!",
+  html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
+            ✅ Xác nhận gia hạn mượn sách
+          </h2>
+          
+          <p style="font-size: 16px; color: #333;">👋 Xin chào <strong>${emailData.username}</strong>,</p>
+          
+          <p style="font-size: 16px; color: #333;">
+            Bạn đã <span style="color: #27ae60; font-weight: bold;">gia hạn thành công</span> sách:
+          </p>
+          
+          <p style="font-size: 18px; color: #2980b9; font-weight: bold; margin: 10px 0;">
+            📘 <em>${emailData.bookTitle}</em>
+          </p>
+          
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+              <td style="padding: 10px; background-color: #ecf0f1; font-weight: bold; width: 50%;">📅 Ngày trả sách cũ:</td>
+              <td style="padding: 10px; background-color: #ffffff;">${emailData.oldReturnDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; background-color: #ecf0f1; font-weight: bold;">🗓️ Ngày trả sách mới:</td>
+              <td style="padding: 10px; background-color: #ffffff;">${emailData.newReturnDate}</td>
+            </tr>
+          </table>
+          
+          <p style="font-size: 15px; color: #e67e22; margin-top: 20px;">⚠️ Vui lòng trả sách đúng hạn để tránh phí phạt.</p>
+          
+          <p style="font-size: 16px; color: #333; margin-top: 30px;">
+            Trân trọng,<br>📖 <strong>Thư viện Đại Học Khoa Học Huế</strong>
+          </p>
+        </div>
+      `
+  });
+
+      return {
+          EM: "Gia hạn sách thành công",
+          EC: 0,
+          DT: {
+              newReturnDate: newReturnDate,
+              transactionId: transaction.id
+          }
+      };
+
+  } catch (error) {
+      console.error("Error in extendLoanService:", error);
+      return {
+          EM: "Lỗi khi gia hạn sách",
+          EC: -1,
+          DT: []
+      };
+  }
+};
+
 module.exports = {
   autoUpdateStatusInDB,
   createTransactionService,
   updateTransactionStatuses,
   updateStatuses,
-  cronSendEmail
+  cronSendEmail,
+  extendLoanService
 };

@@ -34,6 +34,7 @@ const initAPIRoutes = (app,io) => {
   router.put("/transactions/update-date-and-status", transactionController.updateDateAndStatus);  // Cập nhật ngày và trạng thái
   router.put("/transactions/autoupdatestatus", transactionController.autoUpdateStatusInDB);  // Tự động cập nhật trạng thái
   router.delete("/transactions/delete/:id", transactionController.deleteTransaction);  // Xóa giao dịch
+  router.put("/transactions/extend/:id", transactionController.extendLoan); // Gia hạn mượn sách
 
   // Book management routes
   router.get("/books/read", bookController.readFunc);             // Lấy danh sách sách

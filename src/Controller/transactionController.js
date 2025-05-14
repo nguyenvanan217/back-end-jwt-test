@@ -226,10 +226,41 @@ const createTransactionController = async (req, res) => {
   }
 };
 
+const extendLoan = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!id) {
+      return res.status(400).json({
+        EM: "Thiếu ID giao dịch",
+        EC: 1,
+        DT: []
+      });
+    }
+
+    const result = await transactionService.extendLoanService(id);
+    console.log("xxxxxxxxxxxxxxResult from extendLoanService:", result);
+     return res.status(200).json({
+      EM: result.EM,
+      EC: result.EC,
+      DT: result.DT,
+    });
+
+  } catch (error) {
+    console.error("Error extending loan:", error);
+    return res.status(500).json({
+      EM: "Lỗi server khi gia hạn sách",
+      EC: -1,
+      DT: []
+    });
+  }
+};
+
 module.exports = {
   deleteTransaction,
   autoUpdateStatusInDB,
   updateDateAndStatus,
   markViolationAsResolved,
   createTransactionController,
+  extendLoan,
 };

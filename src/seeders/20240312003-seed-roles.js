@@ -39,6 +39,7 @@ module.exports = {
       { id: 29, url: '/get-admin-chat-id', description: 'Lấy ID chat của admin' },
       {id: 30, url: '/books/import-excel', description: 'Import sách từ file Excel'},
       {id: 31, url: '/chatbot', description: 'Giao tiếp với chatbot'},
+      {id: 32, url: '/transactions/extend', description: 'Gia hạn mượn sách cho sinh viên'}
     ].map(role => ({
       ...role,
       createdAt: new Date(),

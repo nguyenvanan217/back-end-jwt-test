@@ -10,7 +10,7 @@ module.exports = {
 
       // Define student permissions by ID (1-5 are basic permissions)
       const studentRoleIds = [1, 2, 3, 4, 5]; // account, register, login, logout, books/read
-      const adminRoleIds = Array.from({ length: 31 }, (_, i) => i + 1); // All roles (1-31)
+      const adminRoleIds = Array.from({ length: 32 }, (_, i) => i + 1); // All roles (1-32)
 
       // Create GroupRoles arrays with explicit IDs
       let currentId = 1;
