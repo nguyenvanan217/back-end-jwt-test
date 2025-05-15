@@ -76,7 +76,7 @@ const checkUserPermission = (req, res, next) => {
     let currentUrl = req.path;
     if (!roles || roles.length === 0) {
       return res.status(403).json({
-        EM: "You don't have permission to access this resource",
+        EM: "Bạn không có quyền truy cập tài nguyên này",
         EC: -1,
         DT: "",
       });
@@ -86,7 +86,7 @@ const checkUserPermission = (req, res, next) => {
       next();
     } else {
       return res.status(403).json({
-        EM: "You don't have permission to access this resource",
+        EM: "Bạn không có quyền truy cập tài nguyên này",
         EC: -1,
         DT: "",
       });
