@@ -136,6 +136,66 @@ const createTransactionService = async (data) => {
       quantity: book.quantity - 1,
     });
 
+    // Gửi email thông báo mượn sách thành công
+    const emailData = {
+      username: user.username,
+      bookTitle: book.title,
+      borrowDate: new Date(data.borrowDate).toLocaleDateString('vi-VN'),
+      returnDate: new Date(data.returnDate).toLocaleDateString('vi-VN')
+    };
+
+    await emailService.transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "📚 Xác nhận mượn sách thành công!",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px;">
+            ✅ Xác nhận mượn sách thành công
+          </h2>
+          
+          <p style="font-size: 16px; color: #333;">👋 Xin chào <strong>${emailData.username}</strong>,
+          email: <strong>${user.email}</strong></p>
+
+          <p style="font-size: 16px; color: #333;">
+            Bạn đã <span style="color: #27ae60; font-weight: bold;">mượn thành công</span> sách:
+          </p>
+          
+          <p style="font-size: 18px; color: #2980b9; font-weight: bold; margin: 10px 0;">
+            📘 <em>${emailData.bookTitle}</em>
+          </p>
+          
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+              <td style="padding: 10px; background-color: #ecf0f1; font-weight: bold; width: 50%;">📅 Ngày mượn:</td>
+              <td style="padding: 10px; background-color: #ffffff;">${emailData.borrowDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; background-color: #ecf0f1; font-weight: bold;">🗓️ Ngày hẹn trả:</td>
+              <td style="padding: 10px; background-color: #ffffff;">${emailData.returnDate}</td>
+            </tr>
+          </table>
+          
+          <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #ffc107;">
+            <p style="font-size: 15px; color: #856404; margin: 0;">
+              ⚠️ <strong>Lưu ý quan trọng:</strong>
+            </p>
+            <ul style="color: #856404; margin: 10px 0;">
+              <li>Vui lòng trả sách đúng hạn để tránh phí phạt</li>
+              <li>Giữ gìn sách cẩn thận, không làm hư hỏng</li>
+              <li>Trong trường hợp làm mất sách, vui lòng thông báo cho quản lý</li>
+              <li>Có thể gia hạn thêm 15 ngày nếu cần thiết bằng cách nhắn tin cho quản lý</li>
+            </ul>
+          </div>
+          
+          <p style="font-size: 16px; color: #333; margin-top: 30px;">
+            Trân trọng,<br>
+            📖 <strong>Thư viện Đại Học Khoa Học Huế</strong>
+          </p>
+        </div>
+      `
+    });
+
     return {
       EM: "Đăng ký mượn sách thành công",
       EC: 0,

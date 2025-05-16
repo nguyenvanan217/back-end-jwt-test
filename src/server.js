@@ -48,9 +48,9 @@ initAPIRoutes(app, io);
 setupSocket(io);
 
 
-cron.schedule('58 21 * * *', async () => {
+cron.schedule('00 8 * * *', async () => {
   try {
-    console.log('Running scheduled task at 21:07...');
+    console.log('Running scheduled task at 08:00...');
     const currentDate = new Date();
     console.log('Current time:', currentDate.toLocaleString());
     await transactionService.cronSendEmail();

@@ -124,31 +124,59 @@ const getAllGenre = async () => {
 
 const deleteBook = async (id) => {
   try {
-    // Xóa tất cả giao dịch liên quan trước
-    await db.Transactions.destroy({ where: { bookId: id } });
-
-    // Sau đó xóa sách
-    let book = await db.Book.destroy({ where: { id } });
-
-    if (book) {
-      return {
-        EM: "Xóa sách thành công",
-        EC: 0,
-        DT: book,
-      };
-    } else {
+    // Kiểm tra xem sách có tồn tại không
+    const book = await db.Book.findByPk(id);
+    if (!book) {
       return {
         EM: "Không tìm thấy sách",
         EC: 1,
         DT: [],
       };
     }
+
+    // Kiểm tra các giao dịch liên quan
+    const activeTransactions = await db.Transactions.findAll({
+      where: { 
+        bookId: id,
+        status: {
+          [Op.notIn]: ['Đã trả'] // Tìm tất cả giao dịch chưa trả
+        }
+      }
+    });
+
+    if (activeTransactions.length > 0) {
+      return {
+        EM: "Không thể xóa sách này vì đang có người mượn và chưa hoàn trả",
+        EC: 2,
+        DT: {
+          activeTransactions: activeTransactions.length
+        }
+      };
+    }
+
+    // Xóa các giao dịch đã trả của sách này
+    await db.Transactions.destroy({ 
+      where: { 
+        bookId: id,
+        status: 'Đã trả'
+      } 
+    });
+
+    // Sau đó xóa sách
+    await book.destroy();
+
+    return {
+      EM: "Xóa sách thành công",
+      EC: 0,
+      DT: []
+    };
+
   } catch (error) {
-    console.log(error);
+    console.log("Error in deleteBook:", error);
     return {
       EM: "Lỗi trong quá trình xử lý",
-      EC: 1,
-      DT: [],
+      EC: -1,
+      DT: []
     };
   }
 };
