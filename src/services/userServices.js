@@ -20,7 +20,7 @@ const getUser = async (searchTerm = "") => {
         [
           sequelize.fn("COUNT", sequelize.col("Transactions.bookId")),
           "borrowedBooksCount",
-        ],
+        ]
       ],
       include: [
         {
@@ -30,17 +30,29 @@ const getUser = async (searchTerm = "") => {
         {
           model: db.Transactions,
           attributes: ["status"],
-        },
+          where: {
+            status: {
+              [Op.in]: ['Chờ trả', 'Quá hạn']
+            }
+          },
+          required: false
+        }
       ],
       group: ["User.id", "Group.id"],
       order: [["id", "DESC"]],
       subQuery: false,
     });
 
+    // Add hasActiveLoans field
+    const usersWithLoanStatus = users.map(user => ({
+      ...user.toJSON(),
+      hasActiveLoans: user.Transactions && user.Transactions.length > 0
+    }));
+
     return {
       EM: "Lấy tất cả người dùng thành công",
       EC: 0,
-      DT: users,
+      DT: usersWithLoanStatus,
     };
   } catch (error) {
     console.log(error);
@@ -57,14 +69,11 @@ const getUserPagination = async (page, limit) => {
     let offset = (page - 1) * limit;
 
     const { rows, count } = await db.User.findAndCountAll({
+      distinct: true, // Thêm distinct để tránh đếm trùng
       attributes: [
         "id",
-        "username",
-        "email",
-        [
-          sequelize.fn("COUNT", sequelize.col("Transactions.bookId")),
-          "borrowedBooksCount",
-        ],
+        "username", 
+        "email"
       ],
       include: [
         {
@@ -73,31 +82,52 @@ const getUserPagination = async (page, limit) => {
         },
         {
           model: db.Transactions,
-          attributes: ["status"],
-        },
+          attributes: ["status", "id"],
+          required: false,
+          separate: true  // Giữ separate để tránh ảnh hưởng đến kết quả chính
+        }
       ],
-      group: ["User.id", "Group.id"],
       order: [["id", "DESC"]],
       limit: limit,
       offset: offset,
       subQuery: false,
     });
 
+    // Process data to include transaction stats
+    const processedRows = rows.map(user => {
+      const userData = user.toJSON();
+      const transactions = userData.Transactions || [];
+      
+      // Count transactions by status
+      const transactionStats = transactions.reduce((acc, trans) => {
+        acc[trans.status] = (acc[trans.status] || 0) + 1;
+        return acc;
+      }, {});
+
+      return {
+        ...userData,
+        borrowedBooksCount: transactions.length,
+        hasActiveLoans: transactions.some(t => ['Chờ trả', 'Quá hạn'].includes(t.status)),
+        transactionStats
+      };
+    });
+
     return {
       EM: "Get all users successfully",
       EC: 0,
       DT: {
-        totalRows: count.length,
-        totalPages: Math.ceil(count.length / limit),
-        users: rows,
-      },
+        totalRows: count,
+        totalPages: Math.ceil(count / limit),
+        users: processedRows
+      }
     };
+
   } catch (error) {
     console.log(error);
     return {
       EM: "Something went wrong with the service!",
       EC: 1,
-      DT: [],
+      DT: []
     };
   }
 };
